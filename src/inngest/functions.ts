@@ -1,10 +1,23 @@
 import { inngest } from "@/inngest/client";
 
-export const helloWorld = inngest.createFunction(
-  { id: "hello-world" },
-  { event: "test/hello.world" },
-  async ({ event, step }) => {
-    await step.sleep("wait-a-moment", "1s");
-    return { message: `Hello ${event.data.email}!` };
+import { openai, createAgent, gemini } from "@inngest/agent-kit";
+
+export const codeAgent = inngest.createFunction(
+  { id: "code-agent" },
+  { event: "test/code.agent" },
+  async ({ event }) => {
+
+    const writer = createAgent({
+      name: "writer",
+      system: "You are an expert writer.  You write readable, concise, simple content.",
+      model: gemini({ model: "gemini-2.0-flash" }),
+    });
+
+    const { output } = await writer.run(
+      `Here's the output: ${event.data.value}.`
+    );
+
+    console.log(output);
+    return { output };
   },
 );
