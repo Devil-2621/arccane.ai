@@ -1,11 +1,19 @@
-import { inngest } from "@/inngest/client";
+import { Sandbox} from "@e2b/code-interpreter";
 
+import { inngest } from "@/inngest/client";
 import { openai, createAgent, gemini } from "@inngest/agent-kit";
+import { stepsSchemas } from "inngest/api/schema";
+import { getSandbox } from "./utils";
 
 export const codeAgent = inngest.createFunction(
   { id: "code-agent" },
   { event: "test/code.agent" },
-  async ({ event }) => {
+  async ({ event, step }) => {
+
+    const sandboxId = await step.run("get-sandbox-id", async () => {
+      const sandbox = await Sandbox.create("arccane-ai-nextjs");
+      return sandbox.sandboxId;
+    });
 
     const writer = createAgent({
       name: "writer",
@@ -17,7 +25,14 @@ export const codeAgent = inngest.createFunction(
       `Here's the output: ${event.data.value}.`
     );
 
-    console.log(output);
-    return { output };
+
+    const sandboxUrl = await step.run("get-sandbox-url", async () => {
+      const sandbox = await getSandbox(sandboxId);
+      const host =  sandbox.getHost(3000);
+      return `http://${host}`;
+    });
+
+    
+    return { output, sandboxUrl };
   },
 );
