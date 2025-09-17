@@ -16,7 +16,7 @@ importers:
         version: 5.1.1(react-hook-form@7.59.0(react@19.1.0))
       '@inngest/agent-kit':
         specifier: ^0.9.0
-        version: 0.9.0(inngest@3.40.2(express@5.1.0)(next@15.3.4(@opentelemetry/api@1.9.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.8.3))
+        version: 0.9.0(inngest@3.40.3(express@5.1.0)(next@15.3.4(@opentelemetry/api@1.9.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.8.3))
       '@prisma/client':
         specifier: ^6.13.0
         version: 6.13.0(prisma@6.13.0(typescript@5.8.3))(typescript@5.8.3)
@@ -133,7 +133,7 @@ importers:
         version: 1.14.2
       inngest:
         specifier: ^3.40.1
-        version: 3.40.2(express@5.1.0)(next@15.3.4(@opentelemetry/api@1.9.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.8.3)
+        version: 3.40.3(express@5.1.0)(next@15.3.4(@opentelemetry/api@1.9.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.8.3)
       input-otp:
         specifier: ^1.4.2
         version: 1.4.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -3209,8 +3209,8 @@ packages:
   inherits@2.0.4:
     resolution: {integrity: sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==}
 
-  inngest@3.40.2:
-    resolution: {integrity: sha512-Zq6Fbs9Qib8hEcVaRNjnuV+mri/ksctyyr2LwuevqEjtW6QvlM0GMbTzyPgNCHQIasPsgLdDYYBKd8rQUPGkEQ==}
+  inngest@3.40.3:
+    resolution: {integrity: sha512-e1mfMITUx+bVyNhbcPlqGhW7VEDF8NnpC/kB+hfbT5rBuKztgQZQ2i+6wV3pFKvpLih2dGG5XQFLbFrkJU0wQg==}
     engines: {node: '>=14'}
     peerDependencies:
       '@sveltejs/kit': '>=1.27.3'
@@ -4869,14 +4869,14 @@ snapshots:
   '@img/sharp-win32-x64@0.34.2':
     optional: true
 
-  '@inngest/agent-kit@0.9.0(inngest@3.40.2(express@5.1.0)(next@15.3.4(@opentelemetry/api@1.9.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.8.3))':
+  '@inngest/agent-kit@0.9.0(inngest@3.40.3(express@5.1.0)(next@15.3.4(@opentelemetry/api@1.9.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.8.3))':
     dependencies:
       '@dmitryrechkin/json-schema-to-zod': 1.0.1
       '@inngest/ai': 0.1.2
       '@modelcontextprotocol/sdk': 1.17.5
       eventsource: 3.0.7
       express: 4.21.2
-      inngest: 3.40.2(express@5.1.0)(next@15.3.4(@opentelemetry/api@1.9.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.8.3)
+      inngest: 3.40.3(express@5.1.0)(next@15.3.4(@opentelemetry/api@1.9.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.8.3)
       xxhashjs: 0.2.2
       zod: 3.25.67
       zod-to-json-schema: 3.24.6(zod@3.25.67)
@@ -7956,7 +7956,7 @@ snapshots:
 
   inherits@2.0.4: {}
 
-  inngest@3.40.2(express@5.1.0)(next@15.3.4(@opentelemetry/api@1.9.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.8.3):
+  inngest@3.40.3(express@5.1.0)(next@15.3.4(@opentelemetry/api@1.9.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(typescript@5.8.3):
     dependencies:
       '@bufbuild/protobuf': 2.7.0
       '@inngest/ai': 0.1.6
