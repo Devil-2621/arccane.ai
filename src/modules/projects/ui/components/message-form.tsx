@@ -68,7 +68,7 @@ export const MessageForm = ({ projectId }: Props) => {
         className={cn(
           "relative border p-4 rounded-lg bg-sidebar dark:bg-sidebar transition-all",
           isFocused && "shadow-xs",
-          showUsage && "roounded-t-none"
+          showUsage && "rounded-t-none"
         )}
       >
         <FormField

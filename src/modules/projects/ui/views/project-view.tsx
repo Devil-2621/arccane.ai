@@ -19,7 +19,7 @@ export const ProjectView = ({ projectId }: Props) => {
     <div className="h-screen">
       <ResizablePanelGroup
         direction="horizontal"
-        className="h-[80vh] border rounded"
+        className="h-full border rounded"
       >
         <ResizablePanel
           defaultSize={30}
