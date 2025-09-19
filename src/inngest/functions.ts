@@ -1,13 +1,13 @@
 import { z } from "zod";
 
 import { PROMPT } from "@/prompt";
+import { prisma } from "@/lib/db";
 
 import { inngest } from "@/inngest/client";
-import { openai, createAgent, gemini, createTool, createNetwork, type Tool } from "@inngest/agent-kit";
+import { openai, gemini, createAgent,  createTool, createNetwork, type Tool } from "@inngest/agent-kit";
 
 import { Sandbox} from "@e2b/code-interpreter";
 import { getSandbox, lastAssistantTextMessageContent } from "./utils";
-import { prisma } from "@/lib/db";
 
 interface AgentState{
   summary: string;
@@ -168,21 +168,22 @@ export const codingAgentFunction = inngest.createFunction(
       if(isError) {
         return await prisma.message.create({
             data:{
+              projectId: event.data.projectId,
               content:"Something went wrong. Please try again.",
               role: "ASSISTANT",
               type: "ERROR",
-            }
+            },
         });
       }
 
       return await prisma.message.create({
         data:{
+          projectId: event.data.projectId,
           content: result.state.data.summary,
           role: "ASSISTANT",
           type: "RESULT",
           fragment: {
-              create:
-              {
+              create:{
                 content: result.state.data.summary, // If you want to store files as content
                 sandboxUrl: sandboxUrl,
                 titles: "Fragment",
