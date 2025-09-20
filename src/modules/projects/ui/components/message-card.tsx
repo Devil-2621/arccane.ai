@@ -118,7 +118,7 @@ interface MessageCardProps {
   type: MessageType;
 }
 
-const MessageCard = ({
+export const MessageCard = ({
   content,
   role,
   fragment,
@@ -145,5 +145,3 @@ const MessageCard = ({
     </div>
   );
 };
-
-export default MessageCard;

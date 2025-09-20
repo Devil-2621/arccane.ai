@@ -8,7 +8,6 @@ import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Toaster } from "@/components/ui/sonner";
 
 const Page = () => {
   const router = useRouter();
@@ -37,7 +36,6 @@ const Page = () => {
         >
           Submit
         </Button>
-        <Toaster />
       </div>
     </div>
   );
