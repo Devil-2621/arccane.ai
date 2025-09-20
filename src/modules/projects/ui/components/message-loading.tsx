@@ -1,14 +1,14 @@
 import Image from "next/image";
 import { useState, useEffect } from "react";
 
-const ShimmerMeassages = () => {
+const ShimmerMessages = () => {
   const messages = [
     "Thinking...",
     "Loading...",
     "Generating...",
     "Almost there...",
     "Analyzing your request...",
-    "Building you website...",
+    "Building your website...",
     "Crafting components...",
     "Optimizing Layout...",
     "Adding final touches...",
@@ -27,7 +27,7 @@ const ShimmerMeassages = () => {
     return () => clearInterval(interval);
   }, [messages.length]);
   return (
-    <div className="felx items-center gap-2">
+    <div className="flex items-center gap-2">
       <span className="text-base text-muted-foreground animate-pulse">
         {messages[currentMessageIndex]}
       </span>
@@ -49,7 +49,7 @@ export const MessageLoading = () => {
         <span className="text-sm font-medium">Arccane</span>
       </div>
       <div className="pl-8 flex flex-col gap-y-4">
-        <ShimmerMeassages />
+        <ShimmerMessages />
       </div>
     </div>
   );

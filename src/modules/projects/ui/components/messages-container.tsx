@@ -26,11 +26,11 @@ const MessagesContainer = ({
     trpc.messages.getMany.queryOptions(
       {
         projectId: projectId,
-      },
-      {
-        //TODO: Temp updating live messages
-        refetchInterval: 5000,
       }
+      // {
+      //   //TODO: Temp updating live messages
+      //   refetchInterval: 5000,
+      // }
     )
   );
 
