@@ -10,6 +10,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 import { useTRPC } from "@/trpc/client";
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import { Form, FormField } from "@/components/ui/form";
 
 interface Props {
@@ -91,8 +92,9 @@ export const MessageForm = ({ projectId }: Props) => {
                   }
                 }}
               />
+              <Separator />
               <div className="flex gap-x-2 items-end justify-between pt-2">
-                <div className="text-[10px] text-muted-foreground font-mono">
+                <div className="text-[10px] mb-1.5 text-muted-foreground font-mono">
                   <kbd className="ml-auto pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">
                     <span>&#8984;</span>Ctrl + Enter
                   </kbd>
@@ -101,7 +103,7 @@ export const MessageForm = ({ projectId }: Props) => {
                 <Button
                   disabled={isButtonDisabled}
                   className={cn(
-                    "size-8 rounded-full",
+                    "size-8 rounded-full w-[62px] h-[31px]",
                     isButtonDisabled && "bg-muted-foreground border"
                   )}
                 >
