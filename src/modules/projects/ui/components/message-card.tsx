@@ -60,14 +60,13 @@ const AssistantMessage = ({
   return (
     <div
       className={cn(
-        "flex flex-col group pb-4 px-2 p-2 bg-green-50 rounded-xl m-2",
+        "flex flex-col group pb-4 px-2 p-2 rounded-xl m-2",
         type === "ERROR" &&
           "text-red-700 dark:text-red-500 bg-red-100 rounded-xl",
-        isActiveFragment && "bg-accent/50 rounded-lg"
+        isActiveFragment && "rounded-lg"
       )}
     >
-      <div className="flex items-center gap-2 mb-2 bg-gradient-to-r from-background/70 to-transparent rounded-full p-2">
-        {/*TODO: add Logo*/}
+      <div className="flex items-center gap-2 mb-2 bg-gradient-to-r from-black/15 to-transparent dark:bg-gradient-to-r dark:from-white/20 dark:to-transparent rounded-full p-2">
         <Image
           src="/Arccane_logo_dark.svg"
           alt="Arccane AI Logo"
@@ -81,7 +80,7 @@ const AssistantMessage = ({
         </span>
       </div>
       <div className="pl-8 flex flex-col gap-y-4">
-        <span>{content}</span>
+        <span className="pr-2 font-normal">{content}</span>
         {fragment && type === "RESULT" && (
           <FragmentCard
             fragment={fragment}

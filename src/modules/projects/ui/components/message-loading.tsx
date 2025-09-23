@@ -44,7 +44,7 @@ export const MessageLoading = () => {
           alt="Arccane Logo"
           width={20}
           height={20}
-          className="shrink-0"
+          className="shrink-0 rounded-full"
         />
         <span className="text-sm font-medium">Arccane</span>
       </div>
