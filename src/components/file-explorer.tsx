@@ -34,7 +34,7 @@ interface FileBreadcrumbProps {
 
 const FileBreadcrumb = ({ filePath }: FileBreadcrumbProps) => {
   const pathSegments = filePath.split("/");
-  const maxSegments = 3;
+  const maxSegments = 6;
 
   const renderBreadcrumbItems = () => {
     if (pathSegments.length <= maxSegments) {
@@ -122,7 +122,7 @@ export const FileExplorer = ({ files }: FileExplorerProps) => {
     }
   }, [selectedFile, files]);
   return (
-    <div>
+    <div className="dark:text-white">
       <ResizablePanelGroup direction="horizontal">
         <ResizablePanel defaultSize={30} minSize={30} className="bg-sidebar">
           <TreeView

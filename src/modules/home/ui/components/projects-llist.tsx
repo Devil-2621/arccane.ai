@@ -15,7 +15,7 @@ export const ProjectsList = () => {
   if (!projects) return null;
 
   return (
-    <div className="w-full bg-white dark:bg-sidebar rounded-xl p-8 border flex flex-col gap-y-6 sm:gap-y-4">
+    <div className="w-full bg-sidebar rounded-xl p-8 border flex flex-col gap-y-6 sm:gap-y-4">
       <h2 className="text-2xl font-semibold">Saved Projects</h2>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
         {projects.length === 0 && (
@@ -40,7 +40,7 @@ export const ProjectsList = () => {
                   alt="Arccane Logo"
                   width={32}
                   height={32}
-                  className="object-contain"
+                  className="object-contain rounded-full"
                 />
                 <div className="flex flex-col ">
                   <h3 className="truncate font-medium">

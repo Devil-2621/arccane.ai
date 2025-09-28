@@ -109,13 +109,13 @@ export const ProjectForm = () => {
                     disabled={isButtonDisabled}
                     className={cn(
                       "size-8 rounded-full w-[62px] h-[31px]",
-                      isButtonDisabled && "bg-muted-foreground border"
+                      isButtonDisabled && "bg-primary border"
                     )}
                   >
                     {isPending ? (
                       <Loader2Icon className="size-4 animate-spin" />
                     ) : (
-                      <ArrowUpIcon />
+                      <ArrowUpIcon className="text-white" />
                     )}
                   </Button>
                 </div>

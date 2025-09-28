@@ -20,6 +20,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Arccane.ai",
   description: "Arccane AI - Your Vibe Co-Pilot for Coding",
+  icons: {
+    icon: "/Arccane_logo_dark.ico",
+  },
 };
 
 export default function RootLayout({
