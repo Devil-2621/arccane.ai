@@ -2,14 +2,17 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { FormatDateOptions, formatDistanceToNow } from "date-fns";
+import { formatDistanceToNow } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
 
 import { useTRPC } from "@/trpc/client";
+import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 
 export const ProjectsList = () => {
   const trpc = useTRPC();
+  const { theme, setTheme } = useTheme();
+  const currentTheme = theme === "system" ? setTheme : theme;
   const { data: projects } = useQuery(trpc.projects.getMany.queryOptions());
 
   if (!projects) return null;
@@ -36,7 +39,11 @@ export const ProjectsList = () => {
             >
               <div className="flex items-center gap-x-4">
                 <Image
-                  src="/Arccane_logo_dark.svg"
+                  src={
+                    currentTheme === "light" || currentTheme === "system"
+                      ? "/Arccane_logo_dark.svg"
+                      : "/Arccane_logo.svg"
+                  }
                   alt="Arccane Logo"
                   width={32}
                   height={32}

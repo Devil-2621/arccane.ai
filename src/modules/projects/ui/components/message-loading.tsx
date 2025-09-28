@@ -1,3 +1,6 @@
+"use client";
+
+import { useTheme } from "next-themes";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 
@@ -36,11 +39,18 @@ const ShimmerMessages = () => {
 };
 
 export const MessageLoading = () => {
+  const { theme, setTheme } = useTheme();
+  const currentTheme = theme === "system" ? setTheme : theme;
+
   return (
     <div className="flex flex-col group px-2 pb-4">
       <div className="flex items-center gap-2 pl-2 mb-2">
         <Image
-          src="/Arccane_logo_dark.svg"
+          src={
+            currentTheme === "light" || currentTheme === "system"
+              ? "/Arccane_logo_dark.svg"
+              : "/Arccane_logo.svg"
+          }
           alt="Arccane Logo"
           width={20}
           height={20}
