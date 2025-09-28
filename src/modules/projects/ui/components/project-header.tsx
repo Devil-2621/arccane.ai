@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
 import { useTheme } from "next-themes";
@@ -38,6 +40,7 @@ export const ProjectHeader = ({ projectId }: Props) => {
   );
 
   const { theme, setTheme } = useTheme();
+  const currentTheme = theme === "system" ? setTheme : theme;
 
   return (
     <header className="p-2 flex items-center justify-between border-b">
@@ -49,7 +52,11 @@ export const ProjectHeader = ({ projectId }: Props) => {
             className="focus-visible:ring-0 hover:bg-transparent hover:opacity-75 transition-opacity pl-2!"
           >
             <Image
-              src="/Arccane_logo_dark.svg"
+              src={
+                currentTheme === "light" || currentTheme === "system"
+                  ? "/Arccane_logo_dark.svg"
+                  : "/Arccane_logo.svg"
+              }
               alt="Arccane Logo"
               width={32}
               height={32}

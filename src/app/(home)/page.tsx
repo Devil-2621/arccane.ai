@@ -15,14 +15,19 @@ import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 
 const Page = () => {
-  const { setTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
+  const currentTheme = theme === "system" ? setTheme : theme;
 
   return (
-    <div className="flex flex-col max-w-5xl mx-auto w-full">
+    <div className="flex flex-col max-w-5xl mx-auto w-full z-10">
       <section className="space-y-6 py-[16vh] 2xl:py-48">
         <div className="flex felx-col items-center justify-center">
           <Image
-            src="/Arccane_logo_dark.svg"
+            src={
+              currentTheme === "light" || currentTheme === "system"
+                ? "/Arccane_logo_dark.svg"
+                : "/Arccane_logo.svg"
+            }
             alt="Arccane Logo"
             width={80}
             height={80}
