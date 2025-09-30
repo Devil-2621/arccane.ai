@@ -30,7 +30,7 @@ export const codingAgentFunction = inngest.createFunction(
       description: "An expert coding and web application building AI agent",
       system: PROMPT,
       model: openai({ 
-        model: "gpt-4o-mini",
+        model: "x-ai/grok-4-fast:free",
         apiKey: process.env.OPENROUTER_API_KEY,
         baseUrl: "https://openrouter.ai/api/v1",
       }),
@@ -122,7 +122,7 @@ export const codingAgentFunction = inngest.createFunction(
               }
             });
           }
-      }),
+        }),
       ],
       lifecycle: {
         onResponse: async ({ result, network }) => {

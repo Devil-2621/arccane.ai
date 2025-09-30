@@ -19,7 +19,7 @@ import {
   BreadcrumbEllipsis,
 } from "@/components/ui/breadcrumb";
 import { convertFilestoTreeItems } from "@/lib/utils";
-import { TreeView } from "./tree-view";
+import { TreeView } from "@/components/tree-view";
 
 type FileConnection = { [path: string]: string };
 

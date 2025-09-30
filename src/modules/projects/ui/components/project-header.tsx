@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 import Link from "next/link";
 import Image from "next/image";
 import { useTheme } from "next-themes";
@@ -7,7 +9,9 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import {
   ChevronDownIcon,
   ChevronLeftIcon,
-  EditIcon,
+  Laptop,
+  Moon,
+  Sun,
   SunMoonIcon,
 } from "lucide-react";
 
@@ -39,8 +43,17 @@ export const ProjectHeader = ({ projectId }: Props) => {
     })
   );
 
-  const { theme, setTheme } = useTheme();
-  const currentTheme = theme === "system" ? setTheme : theme;
+  const { resolvedTheme, theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  // Ensure this runs only after hydration
+  useEffect(() => setMounted(true), []);
+
+  const logoSrc = !mounted
+    ? "/Arccane_logo.svg" // fallback during SSR (same everywhere)
+    : resolvedTheme === "light"
+    ? "/Arccane_logo_dark.svg"
+    : "/Arccane_logo.svg";
 
   return (
     <header className="p-2 flex items-center justify-between border-b">
@@ -52,14 +65,10 @@ export const ProjectHeader = ({ projectId }: Props) => {
             className="focus-visible:ring-0 hover:bg-transparent hover:opacity-75 transition-opacity pl-2!"
           >
             <Image
-              src={
-                currentTheme === "light" || currentTheme === "system"
-                  ? "/Arccane_logo_dark.svg"
-                  : "/Arccane_logo.svg"
-              }
+              src={logoSrc}
               alt="Arccane Logo"
-              width={32}
-              height={32}
+              width={24}
+              height={24}
               className="rounded-full"
             />
             <span className="text-sm font-medium">{project?.name}</span>
@@ -83,12 +92,15 @@ export const ProjectHeader = ({ projectId }: Props) => {
               <DropdownMenuSubContent>
                 <DropdownMenuRadioGroup value={theme} onValueChange={setTheme}>
                   <DropdownMenuRadioItem value="light">
+                    <Sun className="h-[1rem] w-[1rem]" />
                     Light
                   </DropdownMenuRadioItem>
                   <DropdownMenuRadioItem value="dark">
+                    <Moon className="h-[1rem] w-[1rem]" />
                     Dark
                   </DropdownMenuRadioItem>
                   <DropdownMenuRadioItem value="system">
+                    <Laptop className="h-[1rem] w-[1rem]" />
                     System
                   </DropdownMenuRadioItem>
                 </DropdownMenuRadioGroup>
