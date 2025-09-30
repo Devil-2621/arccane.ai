@@ -1,33 +1,32 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 import Image from "next/image";
+import { useTheme } from "next-themes";
 
 import { ProjectForm } from "@/modules/home/ui/components/project-form";
 import { ProjectsList } from "@/modules/home/ui/components/projects-llist";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
-import { Moon, Sun } from "lucide-react";
-import { useTheme } from "next-themes";
 
 const Page = () => {
-  const { theme, setTheme } = useTheme();
-  const currentTheme = theme === "system" ? setTheme : theme;
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  // Ensure this runs only after hydration
+  useEffect(() => setMounted(true), []);
+
+  const logoSrc = !mounted
+    ? "/Arccane_logo.svg" // fallback during SSR (same everywhere)
+    : resolvedTheme === "light"
+    ? "/Arccane_logo_dark.svg"
+    : "/Arccane_logo.svg";
 
   return (
     <div className="flex flex-col max-w-5xl mx-auto w-full z-10">
       <section className="space-y-6 py-[16vh] 2xl:py-48">
-        <div className="flex felx-col items-center justify-center">
+        <div className="flex flex-col items-center justify-center">
           <Image
-            src={
-              currentTheme === "light" || currentTheme === "system"
-                ? "/Arccane_logo_dark.svg"
-                : "/Arccane_logo.svg"
-            }
+            src={logoSrc}
             alt="Arccane Logo"
             width={80}
             height={80}
@@ -47,29 +46,6 @@ const Page = () => {
       </section>
 
       <ProjectsList />
-
-      <div className="absolute top-4 right-4">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="icon">
-              <Sun className="h-[1.2rem] w-[1.2rem] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
-              <Moon className="absolute h-[1.2rem] w-[1.2rem] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
-              <span className="sr-only">Toggle theme</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => setTheme("light")}>
-              Light
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setTheme("dark")}>
-              Dark
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setTheme("system")}>
-              System
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
     </div>
   );
 };

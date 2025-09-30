@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { Navbar } from "@/modules/home/ui/components/navbar";
 
 interface Props {
   children: React.ReactNode;
@@ -7,12 +8,13 @@ interface Props {
 const Layout = ({ children }: Props) => {
   return (
     <main className="flex flex-col min-h-screen max-h-screen bg-background dark:bg-background">
+      <Navbar />
       <div
         className={cn(
           "absolute inset-0",
           "[background-size:20px_20px]",
-          "[background-image:radial-gradient(#d4d4d4_1px,transparent_1px)]",
-          "dark:[background-image:radial-gradient(#404040_1px,transparent_1px)]"
+          "[background-image:radial-gradient(#d4d4d4_2px,transparent_2px)]",
+          "dark:[background-image:radial-gradient(#404040_1px,transparent_2px)]"
         )}
       />
       {/* Radial gradient for the container to give a faded look */}

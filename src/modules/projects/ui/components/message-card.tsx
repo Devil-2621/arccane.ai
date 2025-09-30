@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 import Image from "next/image";
 import { format } from "date-fns";
 import { ChevronRightIcon, Code2Icon } from "lucide-react";
@@ -60,8 +62,17 @@ const AssistantMessage = ({
   onFragmentClick,
   type,
 }: AssistantMessageProps) => {
-  const { theme, setTheme } = useTheme();
-  const currentTheme = theme === "system" ? setTheme : theme;
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  // Ensure this runs only after hydration
+  useEffect(() => setMounted(true), []);
+
+  const logoSrc = !mounted
+    ? "/Arccane_logo.svg" // fallback during SSR (same everywhere)
+    : resolvedTheme === "light"
+    ? "/Arccane_logo_dark.svg"
+    : "/Arccane_logo.svg";
 
   return (
     <div
@@ -74,11 +85,7 @@ const AssistantMessage = ({
     >
       <div className="flex items-center gap-2 mb-2 bg-gradient-to-r from-black/15 to-transparent dark:bg-gradient-to-r dark:from-white/20 dark:to-transparent rounded-full p-2">
         <Image
-          src={
-            currentTheme === "light" || currentTheme === "system"
-              ? "/Arccane_logo_dark.svg"
-              : "/Arccane_logo.svg"
-          }
+          src={logoSrc}
           alt="Arccane AI Logo"
           width={20}
           height={20}
@@ -123,7 +130,7 @@ interface MessageCardProps {
   fragment: Fragment | null;
   createdAt: Date;
   isActiveFragment: boolean;
-  onFragmentClick: (fragment: Fragment) => void;
+  onFragmentClickAction: (fragment: Fragment) => void;
   type: MessageType;
 }
 
@@ -133,7 +140,7 @@ export const MessageCard = ({
   fragment,
   createdAt,
   isActiveFragment,
-  onFragmentClick,
+  onFragmentClickAction,
   type,
 }: MessageCardProps) => {
   if (role === "ASSISTANT") {
@@ -143,7 +150,7 @@ export const MessageCard = ({
         fragment={fragment}
         createdAt={createdAt}
         isActiveFragment={isActiveFragment}
-        onFragmentClick={onFragmentClick}
+        onFragmentClick={onFragmentClickAction}
         type={type}
       />
     );
