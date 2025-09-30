@@ -55,7 +55,7 @@ interface TreeProps {
   item: TreeItem;
   selectedValue?: string | null;
   onSelect?: (value: string) => void;
-  parentPath: String;
+  parentPath: string;
 }
 
 const Tree = ({ item, selectedValue, onSelect, parentPath }: TreeProps) => {
