@@ -1,15 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
-import Image from "next/image";
 import { format } from "date-fns";
 import { ChevronRightIcon, Code2Icon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { Logo } from "@/components/logo";
 import { Card } from "@/components/ui/card";
 import { Fragment, MessageRole, MessageType } from "@/generated/prisma";
-import { useTheme } from "next-themes";
 
 interface FragmentCardProps {
   fragment: Fragment;
@@ -62,18 +59,6 @@ const AssistantMessage = ({
   onFragmentClick,
   type,
 }: AssistantMessageProps) => {
-  const { resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  // Ensure this runs only after hydration
-  useEffect(() => setMounted(true), []);
-
-  const logoSrc = !mounted
-    ? "/Arccane_logo.svg" // fallback during SSR (same everywhere)
-    : resolvedTheme === "light"
-    ? "/Arccane_logo_dark.svg"
-    : "/Arccane_logo.svg";
-
   return (
     <div
       className={cn(
@@ -84,13 +69,7 @@ const AssistantMessage = ({
       )}
     >
       <div className="flex items-center gap-2 mb-2 bg-gradient-to-r from-black/15 to-transparent dark:bg-gradient-to-r dark:from-white/20 dark:to-transparent rounded-full p-2">
-        <Image
-          src={logoSrc}
-          alt="Arccane AI Logo"
-          width={20}
-          height={20}
-          className="rounded-full shrink-0"
-        />
+        <Logo width={20} height={20} className="rounded-full shrink-0" />
         <span className="text-sm font-medium">Arccane AI</span>
         <span className="text-xs text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100">
           {format(createdAt, "h:mm a 'on' MMM dd, yyyy")}
@@ -100,9 +79,9 @@ const AssistantMessage = ({
         <span className="pr-2 font-normal">{content}</span>
         {fragment && type === "RESULT" && (
           <FragmentCard
-            fragment={fragment}
+            fragment={fragment!}
             isActiveFragment={isActiveFragment}
-            onFragmentClick={() => onFragmentClick(fragment)}
+            onFragmentClick={onFragmentClick}
           />
         )}
       </div>

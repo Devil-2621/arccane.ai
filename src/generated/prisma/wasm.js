@@ -35,12 +35,12 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 6.16.2
- * Query Engine version: 1c57fdcd7e44b29b9313256c76699e91c3ac3c43
+ * Prisma Client JS version: 6.16.3
+ * Query Engine version: bb420e667c1820a8c05a38023385f6cc7ef8e83a
  */
 Prisma.prismaVersion = {
-  client: "6.16.2",
-  engine: "1c57fdcd7e44b29b9313256c76699e91c3ac3c43"
+  client: "6.16.3",
+  engine: "bb420e667c1820a8c05a38023385f6cc7ef8e83a"
 }
 
 Prisma.PrismaClientKnownRequestError = PrismaClientKnownRequestError;
@@ -121,6 +121,12 @@ exports.Prisma.FragmentScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.UsageScalarFieldEnum = {
+  key: 'key',
+  points: 'points',
+  expire: 'expire'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -140,6 +146,11 @@ exports.Prisma.JsonNullValueFilter = {
   JsonNull: Prisma.JsonNull,
   AnyNull: Prisma.AnyNull
 };
+
+exports.Prisma.NullsOrder = {
+  first: 'first',
+  last: 'last'
+};
 exports.MessageRole = exports.$Enums.MessageRole = {
   USER: 'USER',
   ASSISTANT: 'ASSISTANT'
@@ -153,7 +164,8 @@ exports.MessageType = exports.$Enums.MessageType = {
 exports.Prisma.ModelName = {
   Project: 'Project',
   Message: 'Message',
-  Fragment: 'Fragment'
+  Fragment: 'Fragment',
+  Usage: 'Usage'
 };
 /**
  * Create the Client
@@ -188,8 +200,8 @@ const config = {
     "schemaEnvPath": "../../../.env"
   },
   "relativePath": "../../../prisma",
-  "clientVersion": "6.16.2",
-  "engineVersion": "1c57fdcd7e44b29b9313256c76699e91c3ac3c43",
+  "clientVersion": "6.16.3",
+  "engineVersion": "bb420e667c1820a8c05a38023385f6cc7ef8e83a",
   "datasourceNames": [
     "db"
   ],
@@ -202,13 +214,13 @@ const config = {
       }
     }
   },
-  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\nmodel Project {\n  id        String   @id @default(uuid())\n  name      String\n  userId    String\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  messages Message[]\n}\n\nenum MessageRole {\n  USER\n  ASSISTANT\n}\n\nenum MessageType {\n  RESULT\n  ERROR\n}\n\nmodel Message {\n  id        String      @id @default(uuid())\n  content   String\n  role      MessageRole\n  type      MessageType\n  createdAt DateTime    @default(now())\n  updatedAt DateTime    @updatedAt\n\n  projectId String\n  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)\n\n  fragment Fragment?\n}\n\nmodel Fragment {\n  id        String  @id @default(uuid())\n  messageId String  @unique\n  message   Message @relation(fields: [messageId], references: [id], onDelete: Cascade)\n  content   String\n\n  sandboxUrl String\n  titles     String\n  files      Json\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n}\n",
-  "inlineSchemaHash": "63667131400438e49621b7f76f8c8f284be1d9d2d4e53d61a2bb30c11927d2bf",
+  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\nmodel Project {\n  id        String   @id @default(uuid())\n  name      String\n  userId    String\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  messages Message[]\n}\n\nenum MessageRole {\n  USER\n  ASSISTANT\n}\n\nenum MessageType {\n  RESULT\n  ERROR\n}\n\nmodel Message {\n  id        String      @id @default(uuid())\n  content   String\n  role      MessageRole\n  type      MessageType\n  createdAt DateTime    @default(now())\n  updatedAt DateTime    @updatedAt\n\n  projectId String\n  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)\n\n  fragment Fragment?\n}\n\nmodel Fragment {\n  id        String  @id @default(uuid())\n  messageId String  @unique\n  message   Message @relation(fields: [messageId], references: [id], onDelete: Cascade)\n  content   String\n\n  sandboxUrl String\n  titles     String\n  files      Json\n\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n}\n\nmodel Usage {\n  key    String    @id\n  points Int\n  expire DateTime?\n}\n",
+  "inlineSchemaHash": "308b99dd54443158d83cee028147863a825c952d2ffe98c234a6ce174416c1a1",
   "copyEngine": true
 }
 config.dirname = '/'
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"Project\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"messages\",\"kind\":\"object\",\"type\":\"Message\",\"relationName\":\"MessageToProject\"}],\"dbName\":null},\"Message\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"content\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"enum\",\"type\":\"MessageRole\"},{\"name\":\"type\",\"kind\":\"enum\",\"type\":\"MessageType\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"projectId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"project\",\"kind\":\"object\",\"type\":\"Project\",\"relationName\":\"MessageToProject\"},{\"name\":\"fragment\",\"kind\":\"object\",\"type\":\"Fragment\",\"relationName\":\"FragmentToMessage\"}],\"dbName\":null},\"Fragment\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"messageId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"message\",\"kind\":\"object\",\"type\":\"Message\",\"relationName\":\"FragmentToMessage\"},{\"name\":\"content\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"sandboxUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"titles\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"files\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"Project\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"messages\",\"kind\":\"object\",\"type\":\"Message\",\"relationName\":\"MessageToProject\"}],\"dbName\":null},\"Message\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"content\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"enum\",\"type\":\"MessageRole\"},{\"name\":\"type\",\"kind\":\"enum\",\"type\":\"MessageType\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"projectId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"project\",\"kind\":\"object\",\"type\":\"Project\",\"relationName\":\"MessageToProject\"},{\"name\":\"fragment\",\"kind\":\"object\",\"type\":\"Fragment\",\"relationName\":\"FragmentToMessage\"}],\"dbName\":null},\"Fragment\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"messageId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"message\",\"kind\":\"object\",\"type\":\"Message\",\"relationName\":\"FragmentToMessage\"},{\"name\":\"content\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"sandboxUrl\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"titles\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"files\",\"kind\":\"scalar\",\"type\":\"Json\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"Usage\":{\"fields\":[{\"name\":\"key\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"points\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"expire\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
 defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
 config.engineWasm = {
   getRuntime: async () => require('./query_engine_bg.js'),

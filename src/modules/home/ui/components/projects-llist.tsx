@@ -1,31 +1,22 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
 import Link from "next/link";
-import Image from "next/image";
+
 import { useUser } from "@clerk/nextjs";
+
 import { formatDistanceToNow } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
 
 import { useTRPC } from "@/trpc/client";
-import { useTheme } from "next-themes";
+
+import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
 
 export const ProjectsList = () => {
   const trpc = useTRPC();
   const { user } = useUser();
-  const { resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-  // Ensure this runs only after hydration
-  useEffect(() => setMounted(true), []);
-  const { data: projects } = useQuery(trpc.projects.getMany.queryOptions());
 
-  const logoSrc = !mounted
-    ? "/Arccane_logo.svg" // fallback during SSR (same everywhere)
-    : resolvedTheme === "light"
-    ? "/Arccane_logo_dark.svg"
-    : "/Arccane_logo.svg";
+  const { data: projects } = useQuery(trpc.projects.getMany.queryOptions());
 
   if (!projects) return null;
   if (!user) return null;
@@ -51,9 +42,7 @@ export const ProjectsList = () => {
               className="flex flex-col items-start gap-2 w-full"
             >
               <div className="flex items-center gap-x-4">
-                <Image
-                  src={logoSrc}
-                  alt="Arccane Logo"
+                <Logo
                   width={32}
                   height={32}
                   className="object-contain rounded-full"

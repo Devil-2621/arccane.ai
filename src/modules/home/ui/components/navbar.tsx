@@ -3,16 +3,10 @@
 import { useEffect, useState } from "react";
 
 import Link from "next/link";
-import Image from "next/image";
+
+import { cn } from "@/lib/utils";
 import { useTheme } from "next-themes";
-import {
-  SignedIn,
-  SignedOut,
-  SignInButton,
-  SignUpButton,
-  UserButton,
-  UserProfile,
-} from "@clerk/nextjs";
+import { SignedIn, SignedOut, SignInButton, SignUpButton } from "@clerk/nextjs";
 
 import {
   DropdownMenu,
@@ -20,34 +14,30 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Laptop, Moon, Sun } from "lucide-react";
+import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
+import { Laptop, Moon, Sun } from "lucide-react";
+import { useScroll } from "@/hooks/use-scroll";
 import { UserControl } from "@/components/user-control";
 
 export const Navbar = () => {
-  const { resolvedTheme, theme, setTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-
+  const isScrolled = useScroll();
   // Ensure this runs only after hydration
   useEffect(() => setMounted(true), []);
 
-  const logoSrc = !mounted
-    ? "/Arccane_logo.svg" // fallback during SSR (same everywhere)
-    : resolvedTheme === "light"
-    ? "/Arccane_logo_dark.svg"
-    : "/Arccane_logo.svg";
-
   return (
     <nav className="p-4 gap-2 bg-transparent sticky top-0 left-0 right-0 z-50 transition-all duration-200 border-b border-transparent">
-      <div className="p-3 max-w-5xl mx-auto w-full flex justify-between items-center bg-background shadow-accent shadow-md backdrop-blur-xl border rounded-full">
+      <div
+        className={cn(
+          "p-3 max-w-6xl mx-auto w-full flex justify-between items-center transition-all duration-300",
+          isScrolled &&
+            "max-w-3xl shadow-accent shadow-xl backdrop-blur-sm border-border border-[1px] rounded-full transition-all duration-300"
+        )}
+      >
         <Link href="/" className="flex items-center gap-2">
-          <Image
-            src={logoSrc}
-            alt="Arccane Logo"
-            width={32}
-            height={32}
-            className="rounded-full"
-          />
+          <Logo width={32} height={32} className="rounded-full" />
           <span className="font-semibold text-lg">Arccane.ai</span>
         </Link>
         <SignedOut>
