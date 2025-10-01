@@ -1,33 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Logo } from "@/components/logo";
 
-import Image from "next/image";
-import { useTheme } from "next-themes";
+import { useTRPC } from "@/trpc/client";
+import { useQuery } from "@tanstack/react-query";
 
 import { ProjectForm } from "@/modules/home/ui/components/project-form";
 import { ProjectsList } from "@/modules/home/ui/components/projects-llist";
+import { Usage } from "@/modules/projects/ui/components/usage";
 
 const Page = () => {
-  const { resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  // Ensure this runs only after hydration
-  useEffect(() => setMounted(true), []);
-
-  const logoSrc = !mounted
-    ? "/Arccane_logo.svg" // fallback during SSR (same everywhere)
-    : resolvedTheme === "light"
-    ? "/Arccane_logo_dark.svg"
-    : "/Arccane_logo.svg";
+  const trpc = useTRPC();
+  const { data: usage } = useQuery(trpc.usage.status.queryOptions());
+  const showUsage = !!usage;
 
   return (
     <div className="flex flex-col max-w-5xl mx-auto w-full z-10">
       <section className="space-y-6 py-[16vh] 2xl:py-48">
         <div className="flex flex-col items-center justify-center">
-          <Image
-            src={logoSrc}
-            alt="Arccane Logo"
+          <Logo
             width={80}
             height={80}
             className="hidden md:block rounded-full"
@@ -45,6 +36,13 @@ const Page = () => {
         </div>
       </section>
 
+      {showUsage && (
+        <Usage
+          points={usage.remainingPoints}
+          msBeforeNext={usage.msBeforeNext}
+          className="max-w-sm"
+        />
+      )}
       <ProjectsList />
     </div>
   );

@@ -1,5 +1,8 @@
 "use client";
 
+import Link from "next/link";
+import { useAuth } from "@clerk/nextjs";
+
 import { Suspense, useState } from "react";
 
 import { Fragment } from "@/generated/prisma";
@@ -17,7 +20,6 @@ import { ProjectHeader } from "../components/project-header";
 import MessagesContainer from "../components/messages-container";
 import { FragmentWeb } from "../components/fragment-web";
 import { EyeIcon, CodeIcon, CrownIcon } from "lucide-react";
-import Link from "next/link";
 import { FileExplorer } from "@/components/file-explorer";
 
 interface Props {
@@ -27,6 +29,9 @@ interface Props {
 export const ProjectView = ({ projectId }: Props) => {
   const [activeFragment, setActiveFragment] = useState<Fragment | null>(null);
   const [tabState, setTabState] = useState<"preview" | "code">("preview");
+
+  const { has } = useAuth();
+  const hasProAccess = has?.({ plan: "pro" });
 
   return (
     <div className="h-screen">
@@ -77,12 +82,20 @@ export const ProjectView = ({ projectId }: Props) => {
                 </TabsTrigger>
               </TabsList>
               <div className="ml-auto flex items-center-center gap-x-2">
-                <Button asChild size="sm" variant="tertiary">
-                  <Link href="/pricing">
-                    <CrownIcon /> Upgrade
-                  </Link>
-                </Button>
-                <UserControl />
+                {!hasProAccess && (
+                  <Button
+                    asChild
+                    size="sm"
+                    variant="tertiary"
+                    className="ml-auto"
+                  >
+                    <Link href="/pricing">
+                      <CrownIcon />
+                      Upgrade
+                    </Link>
+                  </Button>
+                )}
+                <UserControl showName />
               </div>
             </div>
             <TabsContent value="preview">

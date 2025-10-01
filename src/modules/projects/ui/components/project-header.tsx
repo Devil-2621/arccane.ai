@@ -1,9 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
 import Link from "next/link";
-import Image from "next/image";
 import { useTheme } from "next-themes";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import {
@@ -16,6 +13,7 @@ import {
 } from "lucide-react";
 
 import { useTRPC } from "@/trpc/client";
+import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -43,17 +41,7 @@ export const ProjectHeader = ({ projectId }: Props) => {
     })
   );
 
-  const { resolvedTheme, theme, setTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  // Ensure this runs only after hydration
-  useEffect(() => setMounted(true), []);
-
-  const logoSrc = !mounted
-    ? "/Arccane_logo.svg" // fallback during SSR (same everywhere)
-    : resolvedTheme === "light"
-    ? "/Arccane_logo_dark.svg"
-    : "/Arccane_logo.svg";
+  const { theme, setTheme } = useTheme();
 
   return (
     <header className="p-2 flex items-center justify-between border-b">
@@ -64,13 +52,7 @@ export const ProjectHeader = ({ projectId }: Props) => {
             size="sm"
             className="focus-visible:ring-0 hover:bg-transparent hover:opacity-75 transition-opacity pl-2!"
           >
-            <Image
-              src={logoSrc}
-              alt="Arccane Logo"
-              width={24}
-              height={24}
-              className="rounded-full"
-            />
+            <Logo width={24} height={24} className="rounded-full" />
             <span className="text-sm font-medium">{project?.name}</span>
             <ChevronDownIcon />
           </Button>
