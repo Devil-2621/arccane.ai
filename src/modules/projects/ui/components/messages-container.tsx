@@ -2,11 +2,11 @@ import { useTRPC } from "@/trpc/client";
 import { Fragment } from "@/generated/prisma";
 
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { MessageCard } from "./message-card";
 import { MessageForm } from "./message-form";
-import { MessageLoading } from "./message-loading";
+import { MessageLoading, type AgentStage } from "./message-loading";
 
 interface Props {
   projectId: string;
@@ -22,6 +22,13 @@ const MessagesContainer = ({
   const trpc = useTRPC();
   const bottomRef = useRef<HTMLDivElement>(null);
   const lastAssistantMessageIdRef = useRef<string | null>(null);
+  const [loaderState, setLoaderState] = useState<{
+    stages: AgentStage[];
+    currentStageId?: string;
+  }>({
+    stages: [],
+    currentStageId: undefined,
+  });
 
   const { data: messages } = useSuspenseQuery(
     trpc.messages.getMany.queryOptions({
@@ -48,6 +55,33 @@ const MessagesContainer = ({
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages.length]);
 
+  useEffect(() => {
+    const es = new EventSource(`/api/inngest/progress?projectId=${projectId}`);
+
+    const handleProgress = (event: MessageEvent<string>) => {
+      try {
+        const data = JSON.parse(event.data) as {
+          currentStageId?: string;
+          stages?: AgentStage[];
+        };
+
+        setLoaderState((prev) => ({
+          stages: data.stages?.length ? data.stages : prev.stages,
+          currentStageId: data.currentStageId ?? prev.currentStageId,
+        }));
+      } catch (error) {
+        console.error("Failed to parse progress event", error);
+      }
+    };
+
+    es.addEventListener("progress", handleProgress as EventListener);
+
+    return () => {
+      es.removeEventListener("progress", handleProgress as EventListener);
+      es.close();
+    };
+  }, [projectId]);
+
   const lastMessage = messages[messages.length - 1];
   const isLastMessageFromUser = lastMessage?.role === "USER";
 
@@ -66,11 +100,17 @@ const MessagesContainer = ({
               fragment={message.fragment}
               createdAt={message.createdAt}
               isActiveFragment={activeFragment?.id === message.fragment?.id}
-              onFragmentClick={() => setActiveFragment(message.fragment)}
+              onFragmentClickAction={(fragment) => setActiveFragment(fragment)}
               type={message.type}
             />
           ))}
-          {isLastMessageFromUser && <MessageLoading />}
+          {isLastMessageFromUser && (
+            <MessageLoading
+              stages={loaderState.stages}
+              currentStageId={loaderState.currentStageId}
+            />
+          )}
+
           <div ref={bottomRef} />
         </div>
       </div>
