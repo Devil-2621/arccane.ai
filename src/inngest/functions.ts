@@ -1,13 +1,13 @@
 import { z } from "zod";
 
-import { PROMPT } from "@/prompt";
+import { FRAGMENT_TITLE_PROMPT, PROMPT, RESPONSE_PROMPT } from "@/prompt";
 import { prisma } from "@/lib/db";
 
 import { inngest } from "@/inngest/client";
-import { openai, gemini, createAgent,  createTool, createNetwork, type Tool } from "@inngest/agent-kit";
+import { openai, gemini, createAgent,  createTool, createNetwork, type Tool, type Message, createState } from "@inngest/agent-kit";
 
 import { Sandbox} from "@e2b/code-interpreter";
-import { getSandbox, lastAssistantTextMessageContent } from "./utils";
+import { getSandbox, lastAssistantTextMessageContent, parseAgentOutput } from "./utils";
 
 interface AgentState{
   summary: string;
@@ -24,6 +24,37 @@ export const codingAgentFunction = inngest.createFunction(
       const sandbox = await Sandbox.create("arccane-ai-nextjs");
       return sandbox.sandboxId;
     });
+
+    const previousMessages = await step.run("get-previous-messages", async () => {
+      const formattedMessages: Message[] = [];
+      
+      const messages = await prisma.message.findMany({
+        where: {
+          projectId: event.data.projectId,
+        },
+        orderBy: { createdAt: "desc" }, //TODO: change to asc if AI doesn't work as expected
+      });
+
+      for (const message of messages) {
+        formattedMessages.push({
+          type: "text",
+          role: message.role === "ASSISTANT" ? "assistant" : "user",
+          content: message.content,
+        });
+      }
+
+      return formattedMessages;
+    });
+
+    const state = createState<AgentState>(
+      {
+        summary: "",
+        files: {},
+      },
+      {
+        messages: previousMessages,
+      },
+    );
 
     const codeAgent = createAgent<AgentState>({
       name: "code-agent",
@@ -143,6 +174,7 @@ export const codingAgentFunction = inngest.createFunction(
       name: "coding-agent-network",
       agents: [codeAgent],
       maxIter: 15,
+      defaultState: state,
       router : async ({ network }) => {
         const summary =  network.state.data.summary;
 
@@ -154,7 +186,32 @@ export const codingAgentFunction = inngest.createFunction(
       }
     });
 
-    const result = await network.run(event.data.value);
+    const result = await network.run(event.data.value, { state });
+
+    const fragmentTitleGenerator = createAgent({
+      name: "fragment-title-generator",
+      description: "Generate a short title for a code fragment",
+      system: FRAGMENT_TITLE_PROMPT,
+      model: openai({ 
+        model: "x-ai/grok-4-fast:free",
+        apiKey: process.env.OPENROUTER_API_KEY,
+        baseUrl: "https://openrouter.ai/api/v1",
+      }),
+    })
+
+    const responseGenerator = createAgent({
+      name: "response-generator",
+      description: "Generate a response for a code fragment",
+      system: RESPONSE_PROMPT,
+      model: openai({ 
+        model: "x-ai/grok-4-fast:free",
+        apiKey: process.env.OPENROUTER_API_KEY,
+        baseUrl: "https://openrouter.ai/api/v1",
+      }),
+    })
+
+    const { output: fragmentTitleOutput } = await fragmentTitleGenerator.run(result.state.data.summary);
+    const { output: responseOutput } = await responseGenerator.run(result.state.data.summary);
 
     const isError  = 
     !result.state.data.summary || 
@@ -181,14 +238,14 @@ export const codingAgentFunction = inngest.createFunction(
       return await prisma.message.create({
         data:{
           projectId: event.data.projectId,
-          content: result.state.data.summary,
+          content: parseAgentOutput(responseOutput),
           role: "ASSISTANT",
           type: "RESULT",
           fragment: {
               create:{
                 content: result.state.data.summary, // If you want to store files as content
                 sandboxUrl: sandboxUrl,
-                titles: "Fragment",
+                titles: parseAgentOutput(fragmentTitleOutput),
                 files: result.state.data.files,
               },
           },
