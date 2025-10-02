@@ -23,15 +23,26 @@ export function lastAssistantTextMessageContent(result: AgentResult) {
 };
 
 export const parseAgentOutput = (value: Message[]) => {
+  if (value.length === 0) {
+    return "Fragment";
+  }
+
   const output = value[0];
 
   if (output.type !== "text") {
     return "Fragment";
   }
 
-  if (Array.isArray(output.content)) {
-    return output.content.map((text) => text).join(" ");
-  } else {
-    return output.content || "Fragment";
+  // Type narrowed: output is now a TextMessage
+  const content = output.content;
+
+  if (!content) {
+    return "Fragment";
   }
+
+  if (Array.isArray(content)) {
+    return content.length > 0 ? content.join(" ") : "Fragment";
+  }
+
+  return content;
 }

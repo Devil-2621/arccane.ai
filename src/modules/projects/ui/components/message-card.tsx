@@ -64,7 +64,7 @@ const AssistantMessage = ({
       className={cn(
         "flex flex-col group pb-4 px-2 p-2 rounded-xl m-2",
         type === "ERROR" &&
-          "text-destructive dark:text-destructive bg-red-100 rounded-xl",
+          "text-red-700 dark:text-red-400 bg-red-400/50 dark:bg-red-950/60 rounded-xl",
         isActiveFragment && "rounded-lg"
       )}
     >

@@ -204,15 +204,25 @@ export const codingAgentFunction = inngest.createFunction(
       description: "Generate a response for a code fragment",
       system: RESPONSE_PROMPT,
       model: openai({ 
-        model: "x-ai/grok-4-fast:free",
+        // model: "x-ai/grok-4-fast:free",
+        model: "openai/gpt-4o-mini",
         apiKey: process.env.OPENROUTER_API_KEY,
         baseUrl: "https://openrouter.ai/api/v1",
       }),
     })
 
-    const { output: fragmentTitleOutput } = await fragmentTitleGenerator.run(result.state.data.summary);
-    const { output: responseOutput } = await responseGenerator.run(result.state.data.summary);
-
+    const [fragmentTitleResult, responseResult] = await Promise.all([
+      fragmentTitleGenerator.run(result.state.data.summary).catch(err => {
+        console.error("Fragment title generation failed:", err);
+        return { output: "Generated Fragment" }; // fallback
+      }),
+      responseGenerator.run(result.state.data.summary).catch(err => {
+        console.error("Response generation failed:", err);
+        return { output: result.state.data.summary }; // fallback to summary
+      }),
+    ]);
+    const { output: fragmentTitleOutput } = fragmentTitleResult;
+    const { output: responseOutput } = responseResult;
     const isError  = 
     !result.state.data.summary || 
     Object.keys(result.state.data.files || {}).length === 0;
@@ -238,14 +248,14 @@ export const codingAgentFunction = inngest.createFunction(
       return await prisma.message.create({
         data:{
           projectId: event.data.projectId,
-          content: parseAgentOutput(responseOutput),
+          content: typeof responseOutput === 'string' ? responseOutput : parseAgentOutput(responseOutput),
           role: "ASSISTANT",
           type: "RESULT",
           fragment: {
               create:{
                 content: result.state.data.summary, // If you want to store files as content
                 sandboxUrl: sandboxUrl,
-                titles: parseAgentOutput(fragmentTitleOutput),
+                titles: typeof fragmentTitleOutput === 'string' ? fragmentTitleOutput : parseAgentOutput(fragmentTitleOutput),
                 files: result.state.data.files,
               },
           },
