@@ -21,8 +21,8 @@ importers:
         specifier: ^5.1.1
         version: 5.2.2(react-hook-form@7.64.0(react@19.2.0))
       '@inngest/agent-kit':
-        specifier: ^0.9.0
-        version: 0.9.0(inngest@3.44.1(express@5.1.0)(next@15.3.4(@opentelemetry/api@1.9.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(typescript@5.9.3)(zod@3.25.76))
+        specifier: ^0.13.0
+        version: 0.13.0(inngest@3.44.1(express@5.1.0)(next@15.3.4(@opentelemetry/api@1.9.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(typescript@5.9.3)(zod@3.25.76))(zod@3.25.76)
       '@prisma/client':
         specifier: ^6.13.0
         version: 6.16.3(prisma@6.16.3(typescript@5.9.3))(typescript@5.9.3)
@@ -150,7 +150,7 @@ importers:
         specifier: ^1.14.2
         version: 1.14.4
       inngest:
-        specifier: ^3.41.0
+        specifier: ^3.44.1
         version: 3.44.1(express@5.1.0)(next@15.3.4(@opentelemetry/api@1.9.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(typescript@5.9.3)(zod@3.25.76)
       input-otp:
         specifier: ^1.4.2
@@ -715,13 +715,11 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@inngest/agent-kit@0.9.0':
-    resolution: {integrity: sha512-/TdogdUvdo4mKa2CLnfQPRTXOW5bgDuvw1SewKS+iszDUzScH90nVCq/GFMEnTFvQnuFNSda080AScF+11ehag==}
+  '@inngest/agent-kit@0.13.0':
+    resolution: {integrity: sha512-4MkNUllJTyEACJCX2IcBnPsL7B5HPBp/XNRW43KKoYyC+Ieep7KKDAJhFvablMJXIrO17pEELcysr3mZBG4xnA==}
     peerDependencies:
-      inngest: '>=3.39.0'
-
-  '@inngest/ai@0.1.2':
-    resolution: {integrity: sha512-79Ez/2142GU5Fo44fMxo8rW6PaeVvIFnYqePdEeGTiymTGMMmcsAtrMTfnvq4AnMorFnrtTh6rr6P9xlSdhPJA==}
+      inngest: '>=3.43.1'
+      zod: '>=4 <5'
 
   '@inngest/ai@0.1.6':
     resolution: {integrity: sha512-4hIvD87LnMFSphkbSToB1EkE9epktyZU2xUj6OFCCj/bn379KfbZbhWcCJEyso0P9Ux4vsNTxiSu9E7JSI9HCQ==}
@@ -5167,24 +5165,18 @@ snapshots:
   '@img/sharp-win32-x64@0.34.4':
     optional: true
 
-  '@inngest/agent-kit@0.9.0(inngest@3.44.1(express@5.1.0)(next@15.3.4(@opentelemetry/api@1.9.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(typescript@5.9.3)(zod@3.25.76))':
+  '@inngest/agent-kit@0.13.0(inngest@3.44.1(express@5.1.0)(next@15.3.4(@opentelemetry/api@1.9.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(typescript@5.9.3)(zod@3.25.76))(zod@3.25.76)':
     dependencies:
       '@dmitryrechkin/json-schema-to-zod': 1.0.1
-      '@inngest/ai': 0.1.2
+      '@inngest/ai': 0.1.6
       '@modelcontextprotocol/sdk': 1.19.1
       eventsource: 3.0.7
       express: 4.21.2
       inngest: 3.44.1(express@5.1.0)(next@15.3.4(@opentelemetry/api@1.9.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(typescript@5.9.3)(zod@3.25.76)
       xxhashjs: 0.2.2
       zod: 3.25.76
-      zod-to-json-schema: 3.24.6(zod@3.25.76)
     transitivePeerDependencies:
       - supports-color
-
-  '@inngest/ai@0.1.2':
-    dependencies:
-      '@types/node': 22.18.8
-      typescript: 5.9.3
 
   '@inngest/ai@0.1.6':
     dependencies:
