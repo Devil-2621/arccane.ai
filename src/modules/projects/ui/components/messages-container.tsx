@@ -2,11 +2,11 @@ import { useTRPC } from "@/trpc/client";
 import { Fragment } from "@/generated/prisma";
 
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 import { MessageCard } from "./message-card";
 import { MessageForm } from "./message-form";
-import { MessageLoading, type AgentStage } from "./message-loading";
+import { MessageLoading } from "./message-loading";
 
 interface Props {
   projectId: string;
@@ -22,21 +22,18 @@ const MessagesContainer = ({
   const trpc = useTRPC();
   const bottomRef = useRef<HTMLDivElement>(null);
   const lastAssistantMessageIdRef = useRef<string | null>(null);
-  const [loaderState, setLoaderState] = useState<{
-    stages: AgentStage[];
-    currentStageId?: string;
-  }>({
-    stages: [],
-    currentStageId: undefined,
-  });
 
   const { data: messages } = useSuspenseQuery(
-    trpc.messages.getMany.queryOptions({
-      projectId: projectId,
-    })
+    trpc.messages.getMany.queryOptions(
+      {
+        projectId: projectId,
+      },
+      {
+        refetchInterval: 5000,
+      }
+    )
   );
 
-  //TODO: This is causing problems
   useEffect(() => {
     const lastAssistantMessage = messages.findLast(
       (message) => message.role === "ASSISTANT"
@@ -54,33 +51,6 @@ const MessagesContainer = ({
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages.length]);
-
-  useEffect(() => {
-    const es = new EventSource(`/api/inngest/progress?projectId=${projectId}`);
-
-    const handleProgress = (event: MessageEvent<string>) => {
-      try {
-        const data = JSON.parse(event.data) as {
-          currentStageId?: string;
-          stages?: AgentStage[];
-        };
-
-        setLoaderState((prev) => ({
-          stages: data.stages?.length ? data.stages : prev.stages,
-          currentStageId: data.currentStageId ?? prev.currentStageId,
-        }));
-      } catch (error) {
-        console.error("Failed to parse progress event", error);
-      }
-    };
-
-    es.addEventListener("progress", handleProgress as EventListener);
-
-    return () => {
-      es.removeEventListener("progress", handleProgress as EventListener);
-      es.close();
-    };
-  }, [projectId]);
 
   const lastMessage = messages[messages.length - 1];
   const isLastMessageFromUser = lastMessage?.role === "USER";
@@ -104,18 +74,12 @@ const MessagesContainer = ({
               type={message.type}
             />
           ))}
-          {isLastMessageFromUser && (
-            <MessageLoading
-              stages={loaderState.stages}
-              currentStageId={loaderState.currentStageId}
-            />
-          )}
-
+          {isLastMessageFromUser && <MessageLoading projectId={projectId} />}
           <div ref={bottomRef} />
         </div>
       </div>
       <div className="relative p-3 pt-1">
-        <div className="absolute -top-6 left-0 right-0 h-8 bg-gradient-to-b from-transparent to-background/90 pointer-events-none" />
+        <div className="absolute -top-7 left-0 right-0 h-8 bg-gradient-to-b from-transparent to-background/90 pointer-events-none" />
         <MessageForm projectId={projectId} />
       </div>
     </div>

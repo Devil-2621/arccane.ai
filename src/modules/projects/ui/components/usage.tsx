@@ -4,16 +4,36 @@ import { CrownIcon } from "lucide-react";
 import { formatDuration, intervalToDuration } from "date-fns";
 
 import { Button } from "@/components/ui/button";
+import { useMemo } from "react";
 
 interface Props {
   points: number;
   msBeforeNext: number;
   className?: string;
+  isPro?: boolean;
 }
 
-export const Usage = ({ points, msBeforeNext, className }: Props) => {
+export const Usage = ({ points, msBeforeNext, className, isPro }: Props) => {
   const { has } = useAuth();
-  const hasProAccess = has?.({ plan: "pro" });
+  const hasProAccess = isPro ?? has?.({ plan: "pro" });
+
+  const resetTime = useMemo(() => {
+    try {
+      const duration = intervalToDuration({
+        start: new Date(),
+        end: new Date(Date.now() + Math.max(msBeforeNext, 0)),
+      });
+
+      const formatted = formatDuration(duration, {
+        format: ["months", "days", "hours"],
+      });
+
+      return formatted || "soon";
+    } catch (error) {
+      console.error("Error formatting duration ", error);
+      return "unknown";
+    }
+  }, [msBeforeNext]);
 
   return (
     <div
@@ -24,18 +44,7 @@ export const Usage = ({ points, msBeforeNext, className }: Props) => {
           <p className="text-sm">
             {points} {hasProAccess ? "" : "free"} credits remaining
           </p>
-          <p className="text-xs text-muted-foreground">
-            Resets in{" "}
-            {formatDuration(
-              intervalToDuration({
-                start: new Date(),
-                end: new Date(Date.now() + msBeforeNext),
-              }),
-              {
-                format: ["months", "days", "hours"],
-              }
-            )}
-          </p>
+          <p className="text-xs text-muted-foreground">Resets in {resetTime}</p>
         </div>
         {!hasProAccess && (
           <Button asChild size="sm" variant="tertiary" className="ml-auto">

@@ -69,7 +69,7 @@ export const LoadingPanel = ({
                 </h2>
               </div>
             </div>
-            <Logo width={38} height={38} className="size-10" />
+            <Logo width={38} height={38} className="size-10 rounded-full" />
           </div>
 
           <p className="mt-6 text-base leading-relaxed text-muted-foreground">

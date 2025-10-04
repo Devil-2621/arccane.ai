@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "motion/react";
@@ -9,8 +10,9 @@ import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
 
 type ErrorPageProps = {
-  error: Error & { digest?: string };
-  reset: () => void;
+  error?: (Error & { digest?: string }) | null;
+  reset?: () => void;
+  resetErrorBoundary?: () => void;
 };
 
 const recoverySuggestions = [
@@ -19,8 +21,28 @@ const recoverySuggestions = [
   "If the issue keeps happening, share the reference code with our team so we can help quickly.",
 ];
 
-const ErrorPage = ({ error, reset }: ErrorPageProps) => {
+const ErrorPage = ({ error, reset, resetErrorBoundary }: ErrorPageProps) => {
   const router = useRouter();
+
+  useEffect(() => {
+    if (error) {
+      console.error("Global error boundary", error);
+    }
+  }, [error]);
+
+  const handleReset = () => {
+    if (reset) {
+      reset();
+      return;
+    }
+
+    if (resetErrorBoundary) {
+      resetErrorBoundary();
+      return;
+    }
+
+    router.refresh();
+  };
 
   return (
     <div className="relative flex min-h-dvh flex-col overflow-hidden bg-background">
@@ -62,7 +84,7 @@ const ErrorPage = ({ error, reset }: ErrorPageProps) => {
                 </h1>
               </div>
             </div>
-            <Logo width={40} height={40} className="size-10" />
+            <Logo width={40} height={40} className="size-10 rounded-full" />
           </div>
 
           <p className="mt-6 text-base leading-relaxed text-muted-foreground">
@@ -83,7 +105,7 @@ const ErrorPage = ({ error, reset }: ErrorPageProps) => {
             ))}
           </ul>
 
-          {error.digest && (
+          {error?.digest && (
             <div className="mt-6 rounded-lg border border-primary/25 bg-primary/10 px-4 py-3 text-xs text-primary">
               <p className="font-semibold uppercase tracking-wide text-primary/80">
                 Reference code
@@ -95,7 +117,7 @@ const ErrorPage = ({ error, reset }: ErrorPageProps) => {
           )}
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <Button onClick={() => reset()} className="gap-2">
+            <Button onClick={handleReset} className="gap-2">
               <RefreshCcw className="size-4" />
               Try again
             </Button>

@@ -11,8 +11,8 @@ import { Button } from "@/components/ui/button";
 
 type ErrorMessagesProps = {
   projectId?: string;
-  error: Error & { digest?: string };
-  onResetAction: () => void;
+  error?: (Error & { digest?: string }) | null;
+  resetErrorBoundary?: () => void;
 };
 
 const messageRecoverySuggestions = [
@@ -24,13 +24,26 @@ const messageRecoverySuggestions = [
 export const ErrorMessages = ({
   projectId,
   error,
-  onResetAction,
+  resetErrorBoundary,
 }: ErrorMessagesProps) => {
   const router = useRouter();
 
   useEffect(() => {
-    console.error("Messages panel error", { projectId, error });
+    if (error) {
+      console.error("Messages panel error", { projectId, error });
+    } else {
+      console.error("Messages panel error: unknown");
+    }
   }, [projectId, error]);
+
+  const handleRetry = () => {
+    if (resetErrorBoundary) {
+      resetErrorBoundary();
+      return;
+    }
+
+    router.refresh();
+  };
 
   return (
     <div className="relative flex min-h-full flex-1 flex-col overflow-hidden bg-background">
@@ -72,7 +85,7 @@ export const ErrorMessages = ({
                 </h2>
               </div>
             </div>
-            <Logo width={38} height={38} className="size-10" />
+            <Logo width={38} height={38} className="size-10 rounded-full" />
           </div>
 
           <p className="mt-6 text-base leading-relaxed text-muted-foreground">
@@ -93,7 +106,7 @@ export const ErrorMessages = ({
             ))}
           </ul>
 
-          {error.digest && (
+          {error?.digest && (
             <div className="mt-6 rounded-lg border border-primary/25 bg-primary/10 px-4 py-3 text-xs text-primary">
               <p className="font-semibold uppercase tracking-wide text-primary/80">
                 Reference code
@@ -105,7 +118,7 @@ export const ErrorMessages = ({
           )}
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <Button onClick={() => onResetAction()} className="gap-2">
+            <Button onClick={handleRetry} className="gap-2">
               <RefreshCcw className="size-4" />
               Retry messages
             </Button>

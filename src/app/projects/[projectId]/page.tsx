@@ -2,17 +2,21 @@ import { ProjectView } from "@/modules/projects/ui/views/project-view";
 
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 
-import { getQueryClient, trpc } from "@/trpc/server";
 import { Suspense } from "react";
 
+import ErrorPage from "@/app/error";
+import LoadingPanel from "@/modules/projects/ui/components/loading-panel";
+import { getQueryClient, trpc } from "@/trpc/server";
+import { ErrorBoundary } from "react-error-boundary";
+
 interface Props {
-  params: Promise<{
+  params: {
     projectId: string;
-  }>;
+  };
 }
 
 const Page = async ({ params }: Props) => {
-  const { projectId } = await params;
+  const { projectId } = params;
 
   const queryClient = getQueryClient();
   void queryClient.prefetchQuery(
@@ -28,9 +32,24 @@ const Page = async ({ params }: Props) => {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <Suspense fallback={<div>Loading...</div>}>
-        <ProjectView projectId={projectId} />
-      </Suspense>
+      <ErrorBoundary fallback={<ErrorPage />}>
+        <Suspense
+          fallback={
+            <LoadingPanel
+              contextLabel="Project page loading"
+              title="Restoring your project workspace"
+              subtitle="Booting the agent sandbox, hydrating queries, and syncing everything you need."
+              hints={[
+                "Connecting to the coding sandbox and verifying credentials.",
+                "Fetching project metadata and recent activity logs.",
+                "Hydrating cached messages so you pick up where you left off.",
+              ]}
+            />
+          }
+        >
+          <ProjectView projectId={projectId} />
+        </Suspense>
+      </ErrorBoundary>
     </HydrationBoundary>
   );
 };

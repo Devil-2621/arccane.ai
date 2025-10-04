@@ -7,7 +7,7 @@ interface Props {
 
 const Layout = ({ children }: Props) => {
   return (
-    <main className="flex flex-col min-h-screen max-h-screen bg-background dark:bg-background">
+    <main className="flex flex-col max-h-screen bg-background dark:bg-background">
       <Navbar />
       <div
         className={cn(
@@ -18,8 +18,7 @@ const Layout = ({ children }: Props) => {
         )}
       />
       {/* Radial gradient for the container to give a faded look */}
-      <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-background [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)] dark:bg-background"></div>
-      {/* <div className="absolute inset-0 -z-10 h-full w-full bg-background dark:bg-[radial-gradient(#393e4a_1px,transparent_2px)] bg-[radial-gradient(#dadde1_1px,transparent_2px)] [background-size:61px_61px]" /> */}
+      <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-background [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black)] dark:bg-background bg-gradient-to-br from-primary/12 via-white/80 to-white/65 px-6 py-10 shadow-[0_32px_70px_-42px_rgba(15,23,42,0.55)] backdrop-blur-lg dark:border-border/40 dark:from-primary/12 dark:via-card/85 dark:to-background/80 dark:shadow-[0_40px_90px_-48px_rgba(15,23,42,0.75)]"></div>
       <div className="flex-1 flex flex-col px-4 pb-4">{children}</div>
     </main>
   );

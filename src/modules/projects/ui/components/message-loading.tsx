@@ -1,9 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Loader2, Sparkles } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { Logo } from "@/components/logo";
+import { useJobProgress } from "@/hooks/useJobProgress";
+import { useTRPC } from "@/trpc/client";
+import type { ProgressStatus } from "@/inngest/progress";
 
 export interface AgentStage {
   id: string;
@@ -166,20 +170,41 @@ const PhaseTimeline = ({
 };
 
 interface MessageLoadingProps {
+  projectId: string;
   stages?: AgentStage[];
   currentStageId?: string;
 }
 
 export const MessageLoading = ({
+  projectId,
   stages = [],
   currentStageId,
 }: MessageLoadingProps) => {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+  const messagesQueryOptions = useMemo(
+    () => trpc.messages.getMany.queryOptions({ projectId }),
+    [trpc, projectId]
+  );
+  const {
+    stages: realtimeStages,
+    currentStageId: realtimeStageId,
+    error,
+    status,
+    message: statusMessage,
+  } = useJobProgress(projectId);
+
+  const hasRealtimeStages = realtimeStages.length > 0;
+  const hasInvalidatedRef = useRef(false);
+
   const resolvedStages = useMemo<AgentStage[]>(() => {
-    if (!stages.length) {
+    const sourceStages = hasRealtimeStages ? realtimeStages : stages;
+
+    if (!sourceStages.length) {
       return DEFAULT_PHASES;
     }
 
-    return stages.map((stage) => {
+    return sourceStages.map((stage) => {
       const overrides = STAGE_OVERRIDES[stage.id] ?? {};
       return {
         id: stage.id,
@@ -188,24 +213,125 @@ export const MessageLoading = ({
         hint: stage.hint ?? overrides.hint,
       } satisfies AgentStage;
     });
-  }, [stages]);
+  }, [hasRealtimeStages, realtimeStages, stages]);
+
+  const effectiveCurrentStageId = useMemo(() => {
+    if (hasRealtimeStages) {
+      return realtimeStageId ?? null;
+    }
+    return currentStageId ?? null;
+  }, [hasRealtimeStages, realtimeStageId, currentStageId]);
 
   const stageIndex = useMemo(() => {
-    if (!currentStageId) return -1;
-    return resolvedStages.findIndex((stage) => stage.id === currentStageId);
-  }, [resolvedStages, currentStageId]);
+    if (!effectiveCurrentStageId) return -1;
+    return resolvedStages.findIndex(
+      (stage) => stage.id === effectiveCurrentStageId
+    );
+  }, [resolvedStages, effectiveCurrentStageId]);
 
-  const [currentIndex, setCurrentIndex] = useState(() =>
-    stageIndex >= 0 ? stageIndex : 0
-  );
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const statusStyles: Record<
+    ProgressStatus,
+    { label: string; className: string }
+  > = {
+    idle: {
+      label: "idle",
+      className: "border-border/60 bg-muted/60 text-muted-foreground/70",
+    },
+    running: {
+      label: "running",
+      className: "border-border/70 bg-muted/60 text-muted-foreground/80",
+    },
+    completed: {
+      label: "completed",
+      className: "border-emerald-400/50 bg-emerald-500/10 text-emerald-500",
+    },
+    failed: {
+      label: "failed",
+      className: "border-destructive/50 bg-destructive/10 text-destructive",
+    },
+    cancelled: {
+      label: "cancelled",
+      className: "border-amber-300/60 bg-amber-100/15 text-amber-500",
+    },
+  };
+
+  const derivedStatus = useMemo<ProgressStatus>(() => {
+    if (status !== "idle") return status;
+
+    if (error) return "failed";
+
+    if (statusMessage && statusMessage.toLowerCase().includes("cancel")) {
+      return "cancelled";
+    }
+
+    if (hasRealtimeStages) {
+      if (realtimeStageId === "finalization") {
+        return "completed";
+      }
+
+      if (stageIndex >= 0 || resolvedStages.length > 0) {
+        return "running";
+      }
+    }
+
+    return "idle";
+  }, [
+    status,
+    error,
+    statusMessage,
+    hasRealtimeStages,
+    realtimeStageId,
+    stageIndex,
+    resolvedStages,
+  ]);
+
+  const statusMeta = statusStyles[derivedStatus] ?? statusStyles.idle;
+
+  useEffect(() => {
+    if (!hasRealtimeStages) {
+      hasInvalidatedRef.current = false;
+      return;
+    }
+
+    if (!realtimeStageId) {
+      return;
+    }
+
+    if (realtimeStageId === "get-sandbox-id") {
+      hasInvalidatedRef.current = false;
+    }
+
+    const shouldInvalidate = ["save-result", "finalization"].includes(
+      realtimeStageId
+    );
+
+    if (shouldInvalidate && !hasInvalidatedRef.current) {
+      queryClient.invalidateQueries(messagesQueryOptions);
+      hasInvalidatedRef.current = true;
+    }
+  }, [
+    hasRealtimeStages,
+    realtimeStageId,
+    projectId,
+    queryClient,
+    messagesQueryOptions,
+  ]);
 
   useEffect(() => {
     if (!resolvedStages.length) {
       return;
     }
 
-    if (stageIndex >= 0) {
-      setCurrentIndex(stageIndex);
+    if (hasRealtimeStages) {
+      if (stageIndex >= 0) {
+        setCurrentIndex(stageIndex);
+      } else {
+        setCurrentIndex((prev) =>
+          Math.min(prev, Math.max(resolvedStages.length - 1, 0))
+        );
+      }
       return;
     }
 
@@ -214,7 +340,7 @@ export const MessageLoading = ({
     }, DISPLAY_INTERVAL_MS);
 
     return () => clearInterval(interval);
-  }, [resolvedStages, stageIndex]);
+  }, [resolvedStages, stageIndex, hasRealtimeStages]);
 
   const activeStage = resolvedStages[currentIndex] ?? DEFAULT_PHASES[0];
   const hasNext = resolvedStages.length > 1;
@@ -232,13 +358,35 @@ export const MessageLoading = ({
         <span className="text-sm font-medium text-foreground/90">
           Arccane AI
         </span>
-        <span className="inline-flex items-center gap-1 rounded-full border border-border/70 bg-muted/60 px-2 py-[2px] text-[10px] uppercase tracking-[0.2em] text-muted-foreground/80">
+        <span
+          className={`inline-flex items-center gap-1 rounded-full border px-2 py-[2px] text-[10px] uppercase tracking-[0.2em] ${statusMeta.className}`}
+        >
           <Sparkles className="size-3 text-primary" />
-          working
+          {statusMeta.label}
         </span>
       </div>
 
       <div className="relative overflow-hidden rounded-xl border border-border/70 bg-card/80 p-4 shadow-[0px_18px_45px_-32px_rgba(15,23,42,0.35)]">
+        {error && (
+          <div className="mb-3 rounded-lg border border-destructive/40 bg-destructive/10 px-3 py-2 text-xs text-destructive">
+            {error}
+          </div>
+        )}
+
+        {!error && statusMessage && derivedStatus !== "idle" && (
+          <div
+            className={`mb-3 rounded-lg border px-3 py-2 text-xs ${
+              derivedStatus === "cancelled"
+                ? "border-amber-300/60 bg-amber-100/15 text-amber-500"
+                : derivedStatus === "completed"
+                ? "border-emerald-400/50 bg-emerald-500/10 text-emerald-500"
+                : "border-border/70 bg-muted/60 text-muted-foreground/80"
+            }`}
+          >
+            {statusMessage}
+          </div>
+        )}
+
         <div className="pointer-events-none absolute inset-x-6 top-0 h-20 rounded-b-full bg-primary/10 blur-2xl" />
 
         <div className="relative flex items-center gap-3">

@@ -4,6 +4,8 @@ import Image from "next/image";
 import { useTheme } from "next-themes";
 import { useState, useEffect } from "react";
 
+import { cn } from "@/lib/utils";
+
 interface Props {
   width?: number;
   height?: number;
@@ -29,7 +31,7 @@ export const Logo = ({ width, height, className }: Props) => {
       alt="Arccane Logo"
       width={width || 24}
       height={height || 24}
-      className={className}
+      className={cn("rounded-full", className)}
     />
   );
 };

@@ -47,8 +47,8 @@ export const ProjectsList = () => {
                   height={32}
                   className="object-contain rounded-full"
                 />
-                <div className="flex flex-col ">
-                  <h3 className="truncate font-medium">
+                <div className="flex flex-col">
+                  <h3 className="truncate font-medium text-wrap">
                     {project.name || "Untitled Project"}
                   </h3>
                   <p className="text-sm text-muted-foreground">

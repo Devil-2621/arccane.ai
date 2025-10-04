@@ -1,5 +1,4 @@
 import z from "zod";
-import { generateSlug } from "random-word-slugs";
 
 import { inngest } from "@/inngest/client";
 
@@ -8,6 +7,58 @@ import { consumeCredits } from "@/lib/usage";
 
 import { protectedProcedure, createTRPCRouter } from "@/trpc/init";
 import { TRPCError } from "@trpc/server";
+
+const STOP_WORDS = new Set([
+    "the",
+    "and",
+    "for",
+    "with",
+    "that",
+    "from",
+    "this",
+    "your",
+    "into",
+    "about",
+    "have",
+    "using",
+    "need",
+    "project",
+    "build",
+    "create",
+    "make",
+    "generate",
+    "an",
+    "a",
+    "to",
+    "of",
+    "on",
+    "in",
+    "my",
+    "our",
+    "new",
+]);
+
+const capitalize = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
+
+const deriveProjectName = (prompt: string) => {
+    const cleaned = prompt.replace(/[\r\n]+/g, " ").toLowerCase();
+    const tokens = cleaned
+        .split(/\s+/)
+        .map((token) => token.replace(/[^a-z0-9-]/g, ""))
+        .filter(Boolean);
+
+    const keyword = tokens.find((token) => token.length > 2 && !STOP_WORDS.has(token));
+
+    if (keyword) {
+        return capitalize(keyword);
+    }
+
+    if (tokens.length > 0) {
+        return capitalize(tokens[0]);
+    }
+
+    return "Untitled Project";
+};
 
 export const projectsRouter = createTRPCRouter({
     getOne: protectedProcedure
@@ -74,9 +125,7 @@ export const projectsRouter = createTRPCRouter({
         const createdProject = await prisma.project.create({
             data: {
                 userId: ctx.auth.userId,
-                name: generateSlug(2, { 
-                    format: "kebab" 
-                }),
+                name: deriveProjectName(input.value),
                 messages: {
                     create: {
                         content: input.value,

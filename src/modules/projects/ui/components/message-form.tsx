@@ -78,6 +78,7 @@ export const MessageForm = ({ projectId }: Props) => {
         <Usage
           points={usage.remainingPoints}
           msBeforeNext={usage.msBeforeNext}
+          isPro={usage.hasProAccess}
         />
       )}
       <form
