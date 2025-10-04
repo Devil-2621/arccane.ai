@@ -280,8 +280,21 @@ export const codingAgentFunction = inngest.createFunction(
       const sandboxUrl = await step.run("get-sandbox-url", async () => {
         const sandbox = await getSandbox(sandboxId);
         const host = sandbox.getHost(3000);
-        return `http://${host}`;
+
+        if (!host) {
+          return null;
+        }
+
+        if (/^https?:\/\//i.test(host)) {
+          return host.replace(/^http:\/\//i, "https://");
+        }
+
+        return `https://${host}`;
       });
+
+      if (!sandboxUrl) {
+        throw new Error("Unable to resolve sandbox preview URL");
+      }
 
       await postProgress(projectId, {
         currentStageId: "save-result",

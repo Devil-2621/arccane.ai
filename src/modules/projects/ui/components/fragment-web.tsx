@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, type ReactNode } from "react";
 import {
   ExternalLinkIcon,
@@ -16,17 +18,39 @@ interface Props {
   data: Fragment;
 }
 
+function normalizeSandboxUrl(url?: string | null) {
+  if (!url) return null;
+
+  const trimmed = url.trim();
+  if (!trimmed) return null;
+
+  const ensureProtocol = (input: string) =>
+    /^https?:\/\//i.test(input) ? input : `https://${input}`;
+
+  try {
+    const parsed = new URL(ensureProtocol(trimmed));
+    parsed.protocol = "https:";
+    return parsed.toString();
+  } catch {
+    const sanitized = trimmed.replace(/^https?:\/\//i, "").replace(/^\/+/, "");
+    if (!sanitized) return null;
+    return `https://${sanitized}`;
+  }
+}
+
 export function FragmentWeb({ data }: Props) {
   const [fragmentKey, setFragmentKey] = useState(0);
   const [copied, setCopied] = useState(false);
+
+  const safeSandboxUrl = normalizeSandboxUrl(data.sandboxUrl);
 
   const onRefresh = () => {
     setFragmentKey((prev) => prev + 1);
   };
 
   const handleCopy = () => {
-    if (!data.sandboxUrl) return;
-    navigator.clipboard.writeText(data.sandboxUrl);
+    if (!safeSandboxUrl) return;
+    navigator.clipboard.writeText(safeSandboxUrl);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -44,37 +68,37 @@ export function FragmentWeb({ data }: Props) {
             size="sm"
             variant="outline"
             onClick={handleCopy}
-            disabled={!data.sandboxUrl || copied}
+            disabled={!safeSandboxUrl || copied}
             className="flex-1 justify-start text-start font-normal"
           >
             <span className="truncate">
               {copied
                 ? "Copied to clipboard"
-                : data.sandboxUrl ?? "Waiting for preview"}
+                : safeSandboxUrl ?? "Waiting for preview"}
             </span>
           </Button>
         </Hint>
         <Hint text="Open in a new tab" side="bottom" align="start">
           <Button
             size="sm"
-            disabled={!data.sandboxUrl}
+            disabled={!safeSandboxUrl}
             variant="outline"
             onClick={() => {
-              if (!data.sandboxUrl) return;
-              window.open(data.sandboxUrl, "_blank");
+              if (!safeSandboxUrl) return;
+              window.open(safeSandboxUrl, "_blank");
             }}
           >
             <ExternalLinkIcon className="size-4" />
           </Button>
         </Hint>
       </div>
-      {data.sandboxUrl ? (
+      {safeSandboxUrl ? (
         <iframe
           key={fragmentKey}
           className="h-full w-full bg-background"
           sandbox="allow-forms allow-scripts allow-same-origin"
           loading="lazy"
-          src={data.sandboxUrl}
+          src={safeSandboxUrl}
         />
       ) : (
         <FragmentPlaceholder variant="preview" />

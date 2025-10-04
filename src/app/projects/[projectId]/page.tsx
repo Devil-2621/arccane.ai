@@ -6,8 +6,13 @@ import LoadingPanel from "@/modules/projects/ui/components/loading-panel";
 import { getQueryClient, trpc } from "@/trpc/server";
 import { ErrorBoundary } from "react-error-boundary";
 
-// Let TypeScript infer the props automatically
-const Page = async ({ params }: any) => {
+type ProjectPageParams = {
+  params: {
+    projectId: string;
+  };
+};
+
+const Page = async ({ params }: ProjectPageParams) => {
   const projectId = params.projectId;
 
   const queryClient = getQueryClient();
