@@ -16,6 +16,7 @@
     "@e2b/code-interpreter": "^2.0.0",
     "@hookform/resolvers": "^5.1.1",
     "@inngest/agent-kit": "^0.13.0",
+    "@opentelemetry/winston-transport": "^0.16.2",
     "@prisma/client": "^6.13.0",
     "@radix-ui/react-accordion": "^1.2.11",
     "@radix-ui/react-alert-dialog": "^1.1.14",
