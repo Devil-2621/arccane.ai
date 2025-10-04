@@ -22,7 +22,7 @@ importers:
         version: 5.2.2(react-hook-form@7.64.0(react@19.2.0))
       '@inngest/agent-kit':
         specifier: ^0.13.0
-        version: 0.13.0(inngest@3.44.1(express@5.1.0)(next@15.3.4(@opentelemetry/api@1.9.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(typescript@5.9.3)(zod@3.25.76))(zod@3.25.76)
+        version: 0.13.0(inngest@3.44.1(express@5.1.0)(next@15.3.4(@opentelemetry/api@1.9.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(typescript@5.9.3)(zod@4.1.11))(zod@4.1.11)
       '@prisma/client':
         specifier: ^6.13.0
         version: 6.16.3(prisma@6.16.3(typescript@5.9.3))(typescript@5.9.3)
@@ -151,7 +151,7 @@ importers:
         version: 1.14.4
       inngest:
         specifier: ^3.44.1
-        version: 3.44.1(express@5.1.0)(next@15.3.4(@opentelemetry/api@1.9.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(typescript@5.9.3)(zod@3.25.76)
+        version: 3.44.1(express@5.1.0)(next@15.3.4(@opentelemetry/api@1.9.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(typescript@5.9.3)(zod@4.1.11)
       input-otp:
         specifier: ^1.4.2
         version: 1.4.2(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -169,7 +169,7 @@ importers:
         version: 0.4.6(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       openai:
         specifier: ^5.19.0
-        version: 5.23.2(zod@3.25.76)
+        version: 5.23.2(zod@4.1.11)
       prismjs:
         specifier: ^1.30.0
         version: 1.30.0
@@ -222,8 +222,8 @@ importers:
         specifier: ^1.1.2
         version: 1.1.2(@types/react-dom@19.2.0(@types/react@19.2.0))(@types/react@19.2.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       zod:
-        specifier: ^3.25.67
-        version: 3.25.76
+        specifier: ^4.1.11
+        version: 4.1.11
     devDependencies:
       '@eslint/eslintrc':
         specifier: ^3
@@ -4810,6 +4810,9 @@ packages:
   zod@3.25.76:
     resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
 
+  zod@4.1.11:
+    resolution: {integrity: sha512-WPsqwxITS2tzx1bzhIKsEs19ABD5vmCVa4xBo2tq/SrV4RNZtfws1EnCWQXM6yh8bD08a1idvkB5MZSBiZsjwg==}
+
 snapshots:
 
   '@alloc/quick-lru@5.2.0': {}
@@ -5165,16 +5168,16 @@ snapshots:
   '@img/sharp-win32-x64@0.34.4':
     optional: true
 
-  '@inngest/agent-kit@0.13.0(inngest@3.44.1(express@5.1.0)(next@15.3.4(@opentelemetry/api@1.9.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(typescript@5.9.3)(zod@3.25.76))(zod@3.25.76)':
+  '@inngest/agent-kit@0.13.0(inngest@3.44.1(express@5.1.0)(next@15.3.4(@opentelemetry/api@1.9.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(typescript@5.9.3)(zod@4.1.11))(zod@4.1.11)':
     dependencies:
       '@dmitryrechkin/json-schema-to-zod': 1.0.1
       '@inngest/ai': 0.1.6
       '@modelcontextprotocol/sdk': 1.19.1
       eventsource: 3.0.7
       express: 4.21.2
-      inngest: 3.44.1(express@5.1.0)(next@15.3.4(@opentelemetry/api@1.9.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(typescript@5.9.3)(zod@3.25.76)
+      inngest: 3.44.1(express@5.1.0)(next@15.3.4(@opentelemetry/api@1.9.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(typescript@5.9.3)(zod@4.1.11)
       xxhashjs: 0.2.2
-      zod: 3.25.76
+      zod: 4.1.11
     transitivePeerDependencies:
       - supports-color
 
@@ -8445,7 +8448,7 @@ snapshots:
 
   inherits@2.0.4: {}
 
-  inngest@3.44.1(express@5.1.0)(next@15.3.4(@opentelemetry/api@1.9.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(typescript@5.9.3)(zod@3.25.76):
+  inngest@3.44.1(express@5.1.0)(next@15.3.4(@opentelemetry/api@1.9.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(typescript@5.9.3)(zod@4.1.11):
     dependencies:
       '@bufbuild/protobuf': 2.9.0
       '@inngest/ai': 0.1.6
@@ -8469,7 +8472,7 @@ snapshots:
       serialize-error-cjs: 0.1.4
       strip-ansi: 5.2.0
       temporal-polyfill: 0.2.5
-      zod: 3.25.76
+      zod: 4.1.11
     optionalDependencies:
       express: 5.1.0
       next: 15.3.4(@opentelemetry/api@1.9.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -8929,9 +8932,9 @@ snapshots:
     dependencies:
       wrappy: 1.0.2
 
-  openai@5.23.2(zod@3.25.76):
+  openai@5.23.2(zod@4.1.11):
     optionalDependencies:
-      zod: 3.25.76
+      zod: 4.1.11
 
   openapi-fetch@0.9.8:
     dependencies:
@@ -9908,3 +9911,5 @@ snapshots:
       zod: 3.25.76
 
   zod@3.25.76: {}
+
+  zod@4.1.11: {}
