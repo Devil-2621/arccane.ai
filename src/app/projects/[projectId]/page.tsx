@@ -9,11 +9,7 @@ import LoadingPanel from "@/modules/projects/ui/components/loading-panel";
 import { getQueryClient, trpc } from "@/trpc/server";
 import { ErrorBoundary } from "react-error-boundary";
 
-interface Props {
-  params: Record<string, string>;
-}
-
-const Page = async ({ params }: Props) => {
+const Page = async ({ params }: { params: { projectId: string } }) => {
   const { projectId } = params;
 
   const queryClient = getQueryClient();
