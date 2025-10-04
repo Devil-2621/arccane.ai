@@ -10,9 +10,7 @@ import { getQueryClient, trpc } from "@/trpc/server";
 import { ErrorBoundary } from "react-error-boundary";
 
 interface Props {
-  params: {
-    projectId: string;
-  };
+  params: Record<string, string>;
 }
 
 const Page = async ({ params }: Props) => {
