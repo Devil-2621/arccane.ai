@@ -119,10 +119,10 @@ export const codingAgentFunction = inngest.createFunction(
         name: "code-agent",
         description: "An expert coding and web application building AI agent",
         system: PROMPT,
-        model: openai({
-          model: "openrouter/sherlock-dash-alpha",
-          apiKey: process.env.OPENROUTER_API_KEY,
-          baseUrl: "https://openrouter.ai/api/v1",
+        model: gemini({
+          model: "gemini-2.5-pro",
+          // apiKey: process.env.OPENROUTER_API_KEY,
+          // baseUrl: "https://openrouter.ai/api/v1",
         }),
         tools: [
           createTool({
@@ -240,10 +240,10 @@ export const codingAgentFunction = inngest.createFunction(
         name: "fragment-title-generator",
         description: "Generate a short title for a code fragment",
         system: FRAGMENT_TITLE_PROMPT,
-        model: openai({
-          model: "openai/gpt-4o-mini",
-          apiKey: process.env.OPENROUTER_API_KEY,
-          baseUrl: "https://openrouter.ai/api/v1",
+        model: gemini({
+          model: "gemini-2.5-pro",
+          // apiKey: process.env.OPENROUTER_API_KEY,
+          // baseUrl: "https://openrouter.ai/api/v1",
         }),
       });
 

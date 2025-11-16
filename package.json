@@ -13,6 +13,7 @@
   "dependencies": {
     "@clerk/nextjs": "^6.33.0",
     "@clerk/themes": "^2.4.22",
+    "@e2b/cli": "^2.4.2",
     "@e2b/code-interpreter": "^2.0.0",
     "@hookform/resolvers": "^5.1.1",
     "@inngest/agent-kit": "^0.13.0",
