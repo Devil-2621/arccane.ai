@@ -120,9 +120,9 @@ export const codingAgentFunction = inngest.createFunction(
         description: "An expert coding and web application building AI agent",
         system: PROMPT,
         model: openai({
-          model: "glm-4.5-flash",
-          apiKey: process.env.Z_AI_API_KEY,
-          baseUrl: "https://api.z.ai/api/paas/v4/",
+          model: "nvidia/nemotron-nano-12b-v2-vl:free",
+          apiKey: process.env.OPENROUTER_API_KEY,
+          baseUrl: "https://openrouter.ai/api/v1",
         }),
         tools: [
           createTool({
