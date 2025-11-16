@@ -120,7 +120,7 @@ export const codingAgentFunction = inngest.createFunction(
         description: "An expert coding and web application building AI agent",
         system: PROMPT,
         model: openai({
-          model: "nvidia/nemotron-nano-12b-v2-vl:free",
+          model: "openrouter/sherlock-dash-alpha",
           apiKey: process.env.OPENROUTER_API_KEY,
           baseUrl: "https://openrouter.ai/api/v1",
         }),
