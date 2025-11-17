@@ -38,7 +38,8 @@ const STOP_WORDS = new Set([
     "new",
 ]);
 
-const capitalize = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
+const capitalize = (value: string) =>
+    value.charAt(0).toUpperCase() + value.slice(1);
 
 const deriveProjectName = (prompt: string) => {
     const cleaned = prompt.replace(/[\r\n]+/g, " ").toLowerCase();
@@ -47,7 +48,9 @@ const deriveProjectName = (prompt: string) => {
         .map((token) => token.replace(/[^a-z0-9-]/g, ""))
         .filter(Boolean);
 
-    const keyword = tokens.find((token) => token.length > 2 && !STOP_WORDS.has(token));
+    const keyword = tokens.find(
+        (token) => token.length > 2 && !STOP_WORDS.has(token)
+    );
 
     if (keyword) {
         return capitalize(keyword);
@@ -62,28 +65,30 @@ const deriveProjectName = (prompt: string) => {
 
 export const projectsRouter = createTRPCRouter({
     getOne: protectedProcedure
-    .input(z.object({
-        id: z.string().min(1, { message: "ID is required" }),
-    }))
-    .query(async ({ input, ctx }) => {
-        const existingProject = await prisma.project.findUnique({
-            where: { 
-                id: input.id,
-                userId: ctx.auth.userId,
-            },
-        });
-
-        if (!existingProject) {
-            throw new TRPCError({
-                code: "NOT_FOUND",
-                message: "Project not found",
+        .input(
+            z.object({
+                id: z.string().min(1, { message: "ID is required" }),
+            })
+        )
+        .query(async ({ input, ctx }) => {
+            // Use findFirst so we can scope both id & userId without relying on a composite unique.
+            const existingProject = await prisma.project.findFirst({
+                where: {
+                    id: input.id,
+                    userId: ctx.auth.userId,
+                },
             });
-        }
 
-        return existingProject;
-    }),
-    getMany: protectedProcedure
-    .query(async ({ ctx }) => {
+            if (!existingProject) {
+                throw new TRPCError({
+                    code: "NOT_FOUND",
+                    message: "Project not found",
+                });
+            }
+
+            return existingProject;
+        }),
+    getMany: protectedProcedure.query(async ({ ctx }) => {
         const projects = await prisma.project.findMany({
             where: {
                 userId: ctx.auth.userId,
@@ -97,54 +102,91 @@ export const projectsRouter = createTRPCRouter({
     }),
 
     create: protectedProcedure
-    .input(
-        z.object({
-            value: z.string()
-            .min(1, {message: "Value is required "})
-            .max(10000, { message: "Value must be less than 10000 characters" }),
-        }),
-    )
-    .mutation(async ({ input, ctx }) => {
-
-        try {
-            await consumeCredits();
-        }catch (error) {
-            if (error instanceof Error) {
-                throw new TRPCError({ 
-                    code: "BAD_REQUEST", 
-                    message: "Something went wrong" 
-                });
-            } else {
-                throw new TRPCError({
-                    code: "TOO_MANY_REQUESTS",
-                    message: "You have exceeded your free credits. Please upgrade to continue using the service.",
-                })
-
-            }
-        }
-        const createdProject = await prisma.project.create({
-            data: {
-                userId: ctx.auth.userId,
-                name: deriveProjectName(input.value),
-                messages: {
-                    create: {
-                        content: input.value,
-                        role: "USER",
-                        type: "RESULT",
-                    }
+        .input(
+            z.object({
+                value: z
+                    .string()
+                    .min(1, { message: "Value is required " })
+                    .max(10000, { message: "Value must be less than 10000 characters" }),
+            })
+        )
+        .mutation(async ({ input, ctx }) => {
+            try {
+                await consumeCredits();
+            } catch (error) {
+                if (error instanceof Error) {
+                    throw new TRPCError({
+                        code: "BAD_REQUEST",
+                        message: "Something went wrong",
+                    });
+                } else {
+                    throw new TRPCError({
+                        code: "TOO_MANY_REQUESTS",
+                        message:
+                            "You have exceeded your free credits. Please upgrade to continue using the service.",
+                    });
                 }
-            },
+            }
+            const createdProject = await prisma.project.create({
+                data: {
+                    userId: ctx.auth.userId,
+                    name: deriveProjectName(input.value),
+                    messages: {
+                        create: {
+                            content: input.value,
+                            role: "USER",
+                            type: "RESULT",
+                        },
+                    },
+                },
+            });
+
+            await inngest.send({
+                name: "coding-agent/run",
+                data: {
+                    value: input.value,
+                    projectId: createdProject.id,
+                },
+            });
+
+            return createdProject;
+        }),
+
+    delete: protectedProcedure
+        .input(
+            z.object({
+                id: z.string().min(1, { message: "ID is required" }),
+            })
+        )
+        .mutation(async ({ input, ctx }) => {
+            // Authorize project ownership first.
+            const existingProject = await prisma.project.findFirst({
+                where: {
+                    id: input.id,
+                    userId: ctx.auth.userId,
+                },
+            });
+
+            if (!existingProject) {
+                throw new TRPCError({
+                    code: "NOT_FOUND",
+                    message: "Project not found",
+                });
+            }
+
+            await prisma.project.delete({
+                where: {
+                    id: existingProject.id,
+                },
+            });
+
+            return { id: existingProject.id };
+        }),
+    deleteAll: protectedProcedure.mutation(async ({ ctx }) => {
+        const result = await prisma.project.deleteMany({
+            where: { userId: ctx.auth.userId },
         });
 
-    
-        await inngest.send({
-          name: "coding-agent/run",
-          data: {
-            value: input.value,
-            projectId: createdProject.id,
-          }
-        });
-
-        return createdProject;
+        return { count: result.count };
     }),
 });

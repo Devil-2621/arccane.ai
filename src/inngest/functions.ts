@@ -242,7 +242,7 @@ export const codingAgentFunction = inngest.createFunction(
         description: "Generate a short title for a code fragment",
         system: FRAGMENT_TITLE_PROMPT,
         model: gemini({
-          model: "gemini-2.5-pro",
+          model: "gemini-2.5-flash",
           // apiKey: process.env.OPENROUTER_API_KEY,
           // baseUrl: "https://openrouter.ai/api/v1",
         }),
@@ -252,10 +252,10 @@ export const codingAgentFunction = inngest.createFunction(
         name: "response-generator",
         description: "Generate a response for a code fragment",
         system: RESPONSE_PROMPT,
-        model: openai({
-          model: "openai/gpt-4o-mini",
-          apiKey: process.env.OPENROUTER_API_KEY,
-          baseUrl: "https://openrouter.ai/api/v1",
+        model: gemini({
+          model: "gemini-2.5-flash",
+          // apiKey: process.env.OPENROUTER_API_KEY,
+          // baseUrl: "https://openrouter.ai/api/v1",
         }),
       });
 
