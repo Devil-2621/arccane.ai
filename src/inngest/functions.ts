@@ -12,7 +12,8 @@ import {
   type Message,
   createState,
 } from "@inngest/agent-kit";
-import { Sandbox } from "@e2b/code-interpreter";
+import { Sandbox } from "e2b";
+import "dotenv/config";
 import {
   getSandbox,
   parseAgentOutput,
@@ -75,7 +76,7 @@ export const codingAgentFunction = inngest.createFunction(
       });
 
       const sandboxId = await step.run("get-sandbox-id", async () => {
-        const sandbox = await Sandbox.create("arccane-ai-nextjs");
+        const sandbox = await Sandbox.create("arccane-ai-nextjs-sandbox");
         return sandbox.sandboxId;
       });
 
