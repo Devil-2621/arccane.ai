@@ -274,6 +274,7 @@ Before you begin, ensure you have the following installed:
 
 2. **Install dependencies**
 
+<<<<<<< HEAD
    Choose your preferred package manager:
 
    ```bash
@@ -693,3 +694,8 @@ This project is private and proprietary. All rights reserved.
     <a href="#-table-of-contents">Back to Top ↑</a>
   </p>
 </div>
+=======
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+tree -I "node_modules|.next|.git" -L 4 > structure.txt
+>>>>>>> bdd739c8cc76ef680c8a9443a0946511f02a5087
