@@ -121,7 +121,7 @@ export const codingAgentFunction = inngest.createFunction(
         description: "An expert coding and web application building AI agent",
         system: PROMPT,
         model: gemini({
-          model: "gemini-2.5-pro",
+          model: "gemini-2.5-flash",
           // apiKey: process.env.OPENROUTER_API_KEY,
           // baseUrl: "https://openrouter.ai/api/v1",
         }),
